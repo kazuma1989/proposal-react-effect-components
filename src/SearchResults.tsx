@@ -3,8 +3,9 @@ import { useSelector } from 'react-redux'
 import { RootState } from './reducer'
 
 export default function SearchResults() {
-  const [posts, status] = useSelector(
-    (state: RootState) => [state.posts, state.postsStatus] as const,
+  const [posts, status, query] = useSelector(
+    (state: RootState) =>
+      [state.posts, state.postsStatus, state.query] as const,
   )
 
   return (
@@ -23,6 +24,7 @@ export default function SearchResults() {
             key={id}
             title={title}
             body={body}
+            keyword={query}
             imgSrc="https://bulma.io/images/placeholders/128x128.png"
           />
         ))
@@ -66,10 +68,12 @@ function Empty() {
 function Post({
   title,
   body,
+  keyword,
   imgSrc,
 }: {
   title?: string
   body?: string
+  keyword?: string
   imgSrc?: string
 }) {
   return (
@@ -83,11 +87,42 @@ function Post({
 
         <div className="media-content">
           <div className="content">
-            <strong>{title}</strong>
-            <p>{body}</p>
+            <strong>
+              <TextWithKeyword text={title} keyword={keyword} />
+            </strong>
+
+            <p>
+              <TextWithKeyword text={body} keyword={keyword} />
+            </p>
           </div>
         </div>
       </article>
     </div>
+  )
+}
+
+function TextWithKeyword({
+  text,
+  keyword,
+}: {
+  text?: string
+  keyword?: string
+}) {
+  if (!text || !keyword) {
+    return <>{text}</>
+  }
+
+  return (
+    <>
+      {text
+        .split(keyword)
+        .flatMap((v, i) => [
+          v,
+          <span key={i} className="has-background-warning">
+            {keyword}
+          </span>,
+        ])
+        .slice(0, -1)}
+    </>
   )
 }

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     // Target
-    "target": "ES2018",
+    "target": "ES2019",
 
     // Required for dynamic import.
     "module": "ESNext",

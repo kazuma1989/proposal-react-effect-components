@@ -1,7 +1,8 @@
 export type RootState = {
-  query: string
+  queryDraft: string
 
   postsStatus: APIStatus
+  query: string
   posts: {
     userId: number
     id: number
@@ -16,7 +17,7 @@ export type Actions =
   | {
       type: 'Search.Posts.Input'
       payload: {
-        query: string
+        queryDraft: string
       }
     }
   | {
@@ -44,6 +45,7 @@ export type Actions =
 
 export default function reducer(
   state: RootState | undefined = {
+    queryDraft: '',
     query: '',
     postsStatus: 'initial',
     posts: [],
@@ -52,10 +54,10 @@ export default function reducer(
 ): RootState {
   switch (action.type) {
     case 'Search.Posts.Input': {
-      const { query } = action.payload
+      const { queryDraft } = action.payload
       return {
         ...state,
-        query,
+        queryDraft,
       }
     }
 
@@ -68,6 +70,7 @@ export default function reducer(
       return {
         ...state,
         postsStatus: 'waiting',
+        query: state.queryDraft,
       }
     }
 

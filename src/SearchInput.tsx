@@ -4,7 +4,7 @@ import { Dispatch } from 'redux'
 import { RootState, Actions } from './reducer'
 
 export default function SearchInput() {
-  const query = useSelector((state: RootState) => state.query)
+  const queryDraft = useSelector((state: RootState) => state.queryDraft)
   const dispatch = useDispatch<Dispatch<Actions>>()
 
   return (
@@ -12,12 +12,12 @@ export default function SearchInput() {
       <Title>Search posts</Title>
 
       <SearchForm
-        text={query}
-        onChange={query =>
+        text={queryDraft}
+        onChange={queryDraft =>
           dispatch({
             type: 'Search.Posts.Input',
             payload: {
-              query,
+              queryDraft,
             },
           })
         }
