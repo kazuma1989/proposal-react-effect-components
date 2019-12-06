@@ -5,11 +5,11 @@ import { SearchAPI } from './SearchAPI'
 
 export default function App() {
   return (
-    <div>
+    <>
       <SearchAPI />
 
       <SearchInput />
       <SearchResults />
-    </div>
+    </>
   )
 }

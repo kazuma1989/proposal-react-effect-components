@@ -10,7 +10,7 @@ export default function SearchResults() {
       <Title>Results</Title>
 
       {posts.map(({ id, title, body }) => (
-        <MediaBox
+        <Post
           key={id}
           title={title}
           body={body}
@@ -33,7 +33,7 @@ function Title({ children }: { children?: React.ReactNode }) {
   return <h1 className="title">{children}</h1>
 }
 
-function MediaBox({
+function Post({
   title,
   body,
   imgSrc,
