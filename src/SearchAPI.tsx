@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Dispatch } from 'redux'
 import { RootState, Actions } from './reducer'
+import { fetchPosts } from './api'
 
 export function SearchAPI() {
   const [query, status] = useSelector(
@@ -18,14 +19,7 @@ export function SearchAPI() {
       })
 
       try {
-        const posts: {
-          userId: number
-          id: number
-          title: string
-          body: string
-        }[] = await fetch(
-          `https://jsonplaceholder.typicode.com/posts?q=${query}`,
-        ).then(r => r.json())
+        const posts = await fetchPosts(query)
 
         dispatch({
           type: 'API.Post.Complete',
