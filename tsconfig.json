@@ -12,7 +12,10 @@
     "allowSyntheticDefaultImports": true,
 
     // Useful type checks
-    "strictNullChecks": true
+    "strictNullChecks": true,
+
+    // Misc
+    "sourceMap": true
   },
 
   // Sources

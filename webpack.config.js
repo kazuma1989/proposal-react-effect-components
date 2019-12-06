@@ -1,29 +1,34 @@
 const path = require('path')
 
-module.exports = {
-  entry: path.resolve(__dirname, './src/index.tsx'),
+module.exports = (env, argv) => {
+  const production = argv.mode === 'production'
 
-  module: {
-    rules: [
-      {
-        test: /\.tsx?$/,
-        use: 'ts-loader',
-        exclude: /node_modules/,
-      },
-    ],
-  },
+  return {
+    entry: path.resolve(__dirname, './src/index.tsx'),
+    output: {
+      filename: 'bundle.js',
+      path: path.resolve(__dirname, './dist'),
+    },
+    devtool: production ? 'source-map' : 'cheap-module-eval-source-map',
 
-  resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
-  },
+    resolve: {
+      extensions: ['.tsx', '.ts', '.js'],
+    },
+    module: {
+      rules: [
+        {
+          test: /\.tsx?$/,
+          use: 'ts-loader',
+          exclude: /node_modules/,
+        },
+      ],
+    },
 
-  output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, './dist'),
-  },
+    stats: 'minimal',
 
-  devServer: {
-    port: 9000,
-    contentBase: path.resolve(__dirname, './dist'),
-  },
+    devServer: {
+      port: 9000,
+      contentBase: path.resolve(__dirname, './dist'),
+    },
+  }
 }
