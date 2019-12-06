@@ -72,15 +72,27 @@ export default function reducer(
     }
 
     case 'API.Post.Start': {
-      return state
+      return {
+        ...state,
+        postsStatus: 'loading',
+      }
     }
 
     case 'API.Post.Complete': {
-      return state
+      const { posts } = action.payload
+
+      return {
+        ...state,
+        postsStatus: 'complete',
+        posts,
+      }
     }
 
     case 'API.Post.Error': {
-      return state
+      return {
+        ...state,
+        postsStatus: 'error',
+      }
     }
 
     default: {
