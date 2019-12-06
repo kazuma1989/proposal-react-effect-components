@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    // Target & modules
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+
+    // JSX
+    "jsx": "react",
+
+    // "import React" instead of "import * as React"
+    "allowSyntheticDefaultImports": true,
+
+    // Useful type checks
+    "strictNullChecks": true
+  },
+
+  // Sources
+  "include": ["./src/**/*"]
+}
