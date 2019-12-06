@@ -4,7 +4,7 @@ import { Dispatch } from 'redux'
 import { RootState, Actions } from './reducer'
 import { fetchPosts } from './api'
 
-export function SearchAPI() {
+export default function SearchAPI() {
   const [query, status] = useSelector(
     (state: RootState) => [state.query, state.postsStatus] as const,
   )
