@@ -14,19 +14,19 @@ type APIStatus = 'initial' | 'waiting' | 'loading' | 'complete' | 'error'
 
 export type Actions =
   | {
-      type: 'Search.Post.Input'
+      type: 'Search.Posts.Input'
       payload: {
         query: string
       }
     }
   | {
-      type: 'Search.Post.Submit'
+      type: 'Search.Posts.Submit'
     }
   | {
-      type: 'API.Post.Start'
+      type: 'API.Posts.Start'
     }
   | {
-      type: 'API.Post.Complete'
+      type: 'API.Posts.Complete'
       payload: {
         posts: {
           id: number
@@ -37,7 +37,7 @@ export type Actions =
       }
     }
   | {
-      type: 'API.Post.Error'
+      type: 'API.Posts.Error'
       payload: unknown
       error: true
     }
@@ -51,7 +51,7 @@ export default function reducer(
   action: Actions,
 ): RootState {
   switch (action.type) {
-    case 'Search.Post.Input': {
+    case 'Search.Posts.Input': {
       const { query } = action.payload
       return {
         ...state,
@@ -59,7 +59,7 @@ export default function reducer(
       }
     }
 
-    case 'Search.Post.Submit': {
+    case 'Search.Posts.Submit': {
       const { postsStatus } = state
       if (postsStatus === 'waiting' || postsStatus === 'loading') {
         return state
@@ -71,14 +71,14 @@ export default function reducer(
       }
     }
 
-    case 'API.Post.Start': {
+    case 'API.Posts.Start': {
       return {
         ...state,
         postsStatus: 'loading',
       }
     }
 
-    case 'API.Post.Complete': {
+    case 'API.Posts.Complete': {
       const { posts } = action.payload
 
       return {
@@ -88,7 +88,7 @@ export default function reducer(
       }
     }
 
-    case 'API.Post.Error': {
+    case 'API.Posts.Error': {
       return {
         ...state,
         postsStatus: 'error',

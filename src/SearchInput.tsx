@@ -15,7 +15,7 @@ export default function SearchInput() {
         text={query}
         onChange={query =>
           dispatch({
-            type: 'Search.Post.Input',
+            type: 'Search.Posts.Input',
             payload: {
               query,
             },
@@ -23,7 +23,7 @@ export default function SearchInput() {
         }
         onSubmit={() =>
           dispatch({
-            type: 'Search.Post.Submit',
+            type: 'Search.Posts.Submit',
           })
         }
       />

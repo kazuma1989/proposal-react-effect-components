@@ -15,21 +15,21 @@ export default function SearchAPI() {
       if (status !== 'waiting') return
 
       dispatch({
-        type: 'API.Post.Start',
+        type: 'API.Posts.Start',
       })
 
       try {
         const posts = await fetchPosts(query)
 
         dispatch({
-          type: 'API.Post.Complete',
+          type: 'API.Posts.Complete',
           payload: {
             posts,
           },
         })
       } catch (e) {
         dispatch({
-          type: 'API.Post.Error',
+          type: 'API.Posts.Error',
           payload: e,
           error: true,
         })
