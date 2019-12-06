@@ -2,7 +2,7 @@
   "compilerOptions": {
     // Target & modules
     "target": "ES2018",
-    "module": "ES2015",
+    "module": "ESNext",
     "moduleResolution": "Node",
 
     // JSX

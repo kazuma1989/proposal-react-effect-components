@@ -1,15 +1,15 @@
-import React from 'react'
-import SearchInput from './SearchInput'
-import SearchResults from './SearchResults'
-import { SearchAPI } from './SearchAPI'
+import React, { Suspense, lazy } from 'react'
 
 export default function App() {
   return (
-    <>
-      <SearchAPI />
-
-      <SearchInput />
-      <SearchResults />
-    </>
+    <Suspense fallback={<Loading />}>
+      <SearchApp />
+    </Suspense>
   )
 }
+
+function Loading() {
+  return <div>Loading...</div>
+}
+
+const SearchApp = lazy(() => import('./SearchApp'))
