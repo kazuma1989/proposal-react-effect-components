@@ -1,23 +1,24 @@
 {
   "compilerOptions": {
-    // Target & modules
+    // Target
     "target": "ES2018",
-    "module": "ESNext",
-    "moduleResolution": "Node",
 
-    // JSX
-    "jsx": "react",
+    // Required for dynamic import.
+    "module": "ESNext",
+
+    // Some packages need this option.
+    "moduleResolution": "Node",
 
     // "import React" instead of "import * as React"
     "allowSyntheticDefaultImports": true,
 
-    // Useful type checks
+    // Required for Parcel with JSX.
+    "jsx": "react",
+
+    // Useful type checks.
     "strictNullChecks": true,
 
-    // Misc
-    "sourceMap": true
-  },
-
-  // Sources
-  "include": ["./src/**/*"]
+    // Just use tsc as a type-checker
+    "noEmit": true
+  }
 }

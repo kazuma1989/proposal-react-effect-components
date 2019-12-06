@@ -1,13 +1,16 @@
 {
   "name": "example-react-redux-async",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "author": "kazuma1989 <kazuma.ebina@quipper.com>",
   "license": "MIT",
   "scripts": {
-    "start": "webpack-dev-server",
-    "build": "webpack --mode production",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "parcel ./src/index.html",
+    "build": "parcel build ./src/index.html",
+    "tsc": "tsc"
   },
+  "browserslist": [
+    "last 1 Chrome versions"
+  ],
   "dependencies": {
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
@@ -19,10 +22,7 @@
     "@types/react-dom": "^16.9.4",
     "@types/react-redux": "^7.1.5",
     "@types/redux": "^3.6.0",
-    "ts-loader": "^6.2.1",
-    "typescript": "3.7.x",
-    "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.9.0"
+    "parcel-bundler": "^1.12.4",
+    "typescript": "3.7.x"
   }
 }

@@ -1,3 +1,8 @@
 {
+  "files.exclude": {
+    // Parcel
+    ".cache/": true,
+    "dist/": true
+  },
   "typescript.tsdk": "node_modules/typescript/lib"
 }
