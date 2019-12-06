@@ -14,10 +14,13 @@ type APIStatus = 'initial' | 'waiting' | 'loading' | 'complete' | 'error'
 
 export type Actions =
   | {
-      type: 'Search.Post.Start'
+      type: 'Search.Post.Input'
       payload: {
         query: string
       }
+    }
+  | {
+      type: 'Search.Post.Submit'
     }
   | {
       type: 'API.Post.Start'
@@ -30,7 +33,7 @@ export type Actions =
           userId: number
           title: string
           body: string
-        }
+        }[]
       }
     }
   | {
@@ -48,8 +51,24 @@ export default function reducer(
   action: Actions,
 ): RootState {
   switch (action.type) {
-    case 'Search.Post.Start': {
-      return state
+    case 'Search.Post.Input': {
+      const { query } = action.payload
+      return {
+        ...state,
+        query,
+      }
+    }
+
+    case 'Search.Post.Submit': {
+      const { postsStatus } = state
+      if (postsStatus === 'waiting' || postsStatus === 'loading') {
+        return state
+      }
+
+      return {
+        ...state,
+        postsStatus: 'waiting',
+      }
     }
 
     case 'API.Post.Start': {
