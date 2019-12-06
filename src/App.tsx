@@ -9,7 +9,7 @@ export default function App() {
 }
 
 function Loading() {
-  return <div>Loading...</div>
+  return <progress className="progress is-small is-info" />
 }
 
 const SearchApp = lazy(() => import('./SearchApp'))

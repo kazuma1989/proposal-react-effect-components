@@ -3,20 +3,30 @@ import { useSelector } from 'react-redux'
 import { RootState } from './reducer'
 
 export default function SearchResults() {
-  const posts = useSelector((state: RootState) => state.posts)
+  const [posts, status] = useSelector(
+    (state: RootState) => [state.posts, state.postsStatus] as const,
+  )
 
   return (
     <Container>
       <Title>Results</Title>
 
-      {posts.map(({ id, title, body }) => (
-        <Post
-          key={id}
-          title={title}
-          body={body}
-          imgSrc="https://bulma.io/images/placeholders/128x128.png"
-        />
-      ))}
+      {status === 'error' ? (
+        <ErrorMessage>ERROR</ErrorMessage>
+      ) : status === 'loading' ? (
+        <Loading />
+      ) : !posts.length ? (
+        <Empty />
+      ) : (
+        posts.map(({ id, title, body }) => (
+          <Post
+            key={id}
+            title={title}
+            body={body}
+            imgSrc="https://bulma.io/images/placeholders/128x128.png"
+          />
+        ))
+      )}
     </Container>
   )
 }
@@ -31,6 +41,26 @@ function Container({ children }: { children?: React.ReactNode }) {
 
 function Title({ children }: { children?: React.ReactNode }) {
   return <h1 className="title">{children}</h1>
+}
+
+function ErrorMessage({ children }: { children?: React.ReactNode }) {
+  return (
+    <article className="message is-danger">
+      <div className="message-body">{children}</div>
+    </article>
+  )
+}
+
+function Loading() {
+  return <progress className="progress is-light" />
+}
+
+function Empty() {
+  return (
+    <article className="message">
+      <div className="message-body">EMPTY</div>
+    </article>
+  )
 }
 
 function Post({
