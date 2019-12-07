@@ -64,7 +64,7 @@ function SearchForm({
         <p className="control is-expanded">
           <input
             className="input"
-            type="search"
+            type="text"
             value={text}
             onChange={e => onChange?.(e.target.value)}
           />
