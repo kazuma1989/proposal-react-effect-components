@@ -1,13 +1,19 @@
 import { useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { Dispatch } from 'redux'
-import { RootState, Actions } from './reducer'
+import { useSelector, useDispatch, useStore } from 'react-redux'
+import { Dispatch, Store } from 'redux'
+import { RootState } from './reducer'
+import { StoreExt } from './storeEnhancer'
 
 export default function SearchAPI() {
+  const store = useStore() as Store<RootState, Actions> & StoreExt
+  useEffect(() => store.appendReducer(reducer), [])
+
   const [query, status] = useSelector(
     (state: RootState) => [state.query, state.postsStatus] as const,
   )
   const dispatch = useDispatch<Dispatch<Actions>>()
+  // or better
+  // const dispatch = store.dispatch
 
   useEffect(() => {
     ;(async () => {
@@ -46,4 +52,72 @@ export default function SearchAPI() {
   }, [query, status])
 
   return null
+}
+
+type Actions =
+  | {
+      type: 'API.Posts.Start'
+    }
+  | {
+      type: 'API.Posts.Complete'
+      payload: {
+        posts: {
+          id: number
+          userId: number
+          title: string
+          body: string
+        }[]
+      }
+    }
+  | {
+      type: 'API.Posts.Error'
+      payload: unknown
+      error: true
+    }
+
+function reducer(state: RootState, action: Actions): RootState {
+  switch (action.type) {
+    case 'API.Posts.Start': {
+      return {
+        ...state,
+        postsStatus: 'loading',
+      }
+    }
+
+    case 'API.Posts.Complete': {
+      const { posts } = action.payload
+      const { query } = state
+
+      return {
+        ...state,
+        postsStatus: 'complete',
+        posts: posts.map(({ userId, id, title, body }) => ({
+          userId,
+          id,
+          titleRaw: title,
+          bodyRaw: body,
+          title: title
+            .split(query)
+            .flatMap(text => [{ text }, { text: query, keyword: true }])
+            .slice(0, -1),
+          body: body
+            .split(query)
+            .flatMap(text => [{ text }, { text: query, keyword: true }])
+            .slice(0, -1),
+        })),
+      }
+    }
+
+    case 'API.Posts.Error': {
+      return {
+        ...state,
+        postsStatus: 'error',
+      }
+    }
+
+    default: {
+      const _: never = action
+      return state
+    }
+  }
 }

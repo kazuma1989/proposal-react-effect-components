@@ -31,25 +31,6 @@ export type Actions =
   | {
       type: 'Search.Posts.Submit'
     }
-  | {
-      type: 'API.Posts.Start'
-    }
-  | {
-      type: 'API.Posts.Complete'
-      payload: {
-        posts: {
-          id: number
-          userId: number
-          title: string
-          body: string
-        }[]
-      }
-    }
-  | {
-      type: 'API.Posts.Error'
-      payload: unknown
-      error: true
-    }
 
 export default function reducer(
   state: RootState | undefined = {
@@ -79,44 +60,6 @@ export default function reducer(
         ...state,
         postsStatus: 'waiting',
         query: state.queryDraft,
-      }
-    }
-
-    case 'API.Posts.Start': {
-      return {
-        ...state,
-        postsStatus: 'loading',
-      }
-    }
-
-    case 'API.Posts.Complete': {
-      const { posts } = action.payload
-      const { query } = state
-
-      return {
-        ...state,
-        postsStatus: 'complete',
-        posts: posts.map(({ userId, id, title, body }) => ({
-          userId,
-          id,
-          titleRaw: title,
-          bodyRaw: body,
-          title: title
-            .split(query)
-            .flatMap(text => [{ text }, { text: query, keyword: true }])
-            .slice(0, -1),
-          body: body
-            .split(query)
-            .flatMap(text => [{ text }, { text: query, keyword: true }])
-            .slice(0, -1),
-        })),
-      }
-    }
-
-    case 'API.Posts.Error': {
-      return {
-        ...state,
-        postsStatus: 'error',
       }
     }
 
