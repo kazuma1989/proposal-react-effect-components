@@ -4,12 +4,10 @@ import { Provider } from 'react-redux'
 import { createStore } from 'redux'
 import App from './App'
 import reducer from './reducer'
+import storeEnhancer from './storeEnhancer'
 
-const store = createStore(
-  reducer,
-  undefined,
-  (window as any)?.__REDUX_DEVTOOLS_EXTENSION__?.(),
-)
+const preloadedState = undefined
+const store = createStore(reducer, preloadedState, storeEnhancer)
 
 ReactDOM.render(
   <Provider store={store}>
