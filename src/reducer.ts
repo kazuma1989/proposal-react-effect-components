@@ -1,8 +1,9 @@
 export type RootState = {
   queryDraft: string
+  queryDraftIsValid: boolean
+  query: string
 
   postsStatus: APIStatus
-  query: string
   posts: {
     userId: number
     id: number
@@ -35,6 +36,7 @@ export type Actions =
 export default function reducer(
   state: RootState | undefined = {
     queryDraft: '',
+    queryDraftIsValid: false,
     query: '',
     postsStatus: 'initial',
     posts: [],
@@ -44,14 +46,17 @@ export default function reducer(
   switch (action.type) {
     case 'Search.Posts.Input': {
       const { queryDraft } = action.payload
+      const queryDraftIsValid = Boolean(queryDraft.trim())
+
       return {
         ...state,
         queryDraft,
+        queryDraftIsValid,
       }
     }
 
     case 'Search.Posts.Submit': {
-      const { postsStatus } = state
+      const { postsStatus, queryDraft } = state
       if (postsStatus === 'waiting' || postsStatus === 'loading') {
         return state
       }
@@ -59,7 +64,7 @@ export default function reducer(
       return {
         ...state,
         postsStatus: 'waiting',
-        query: state.queryDraft,
+        query: queryDraft.trim(),
       }
     }
 

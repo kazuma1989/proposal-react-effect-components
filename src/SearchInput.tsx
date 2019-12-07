@@ -4,8 +4,9 @@ import { Dispatch } from 'redux'
 import { RootState, Actions } from './reducer'
 
 export default function SearchInput() {
-  const [queryDraft, status] = useSelector((state: RootState) => [
+  const [queryDraft, valid, status] = useSelector((state: RootState) => [
     state.queryDraft,
+    state.queryDraftIsValid,
     state.postsStatus,
   ])
   const dispatch = useDispatch<Dispatch<Actions>>()
@@ -24,7 +25,7 @@ export default function SearchInput() {
             },
           })
         }
-        disabled={status === 'loading'}
+        disabled={status === 'loading' || !valid}
         onSubmit={() =>
           dispatch({
             type: 'Search.Posts.Submit',
