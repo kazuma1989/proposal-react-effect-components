@@ -5,7 +5,11 @@ import { createStore } from 'redux'
 import App from './App'
 import reducer from './reducer'
 
-const store = createStore(reducer)
+const store = createStore(
+  reducer,
+  undefined,
+  (window as any)?.__REDUX_DEVTOOLS_EXTENSION__?.(),
+)
 
 ReactDOM.render(
   <Provider store={store}>
