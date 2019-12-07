@@ -4,7 +4,7 @@ import { Dispatch, Store } from 'redux'
 import { RootState } from './reducer'
 import { StoreExt } from './storeEnhancer'
 
-export default function SearchAPI() {
+export default function SearchPostsAPI() {
   const store = useStore() as Store<RootState, Actions> & StoreExt
   useEffect(() => store.appendReducer(reducer), [])
 
@@ -104,6 +104,9 @@ function reducer(state: RootState, action: Actions): RootState {
             .split(query)
             .flatMap(text => [{ text }, { text: query, keyword: true }])
             .slice(0, -1),
+
+          commentsStatus: 'waiting',
+          comments: [],
         })),
       }
     }

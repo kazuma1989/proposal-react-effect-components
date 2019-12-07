@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { RootState } from './reducer'
+import { RootState, APIStatus } from './reducer'
 
 export default function SearchResults() {
   const [posts, status] = useSelector(
@@ -18,12 +18,14 @@ export default function SearchResults() {
       ) : !posts.length ? (
         <Empty />
       ) : (
-        posts.map(({ id, title, body }) => (
+        posts.map(({ id, title, body, comments, commentsStatus }) => (
           <Post
             key={id}
             title={title}
             body={body}
             imgSrc="https://bulma.io/images/placeholders/128x128.png"
+            commentsStatus={commentsStatus}
+            comments={comments}
           />
         ))
       )}
@@ -67,6 +69,8 @@ function Post({
   title = [],
   body = [],
   imgSrc,
+  commentsStatus = 'initial',
+  comments = [],
 }: {
   title?: {
     text: string
@@ -76,8 +80,14 @@ function Post({
     text: string
     keyword?: boolean
   }[]
-  keyword?: string
   imgSrc?: string
+  commentsStatus?: APIStatus
+  comments?: {
+    id: number
+    name: string
+    email: string
+    body: string
+  }[]
 }) {
   const titleRaw = title.map(v => v.text).join('')
 
@@ -116,8 +126,52 @@ function Post({
               )}
             </p>
           </div>
+
+          {commentsStatus === 'error' ? (
+            <ErrorMessage>ERROR</ErrorMessage>
+          ) : commentsStatus === 'loading' ? (
+            <Loading />
+          ) : !comments.length ? (
+            <Empty />
+          ) : (
+            comments.map(({ id, email, body }) => (
+              <Comment
+                key={id}
+                email={email}
+                body={body}
+                imgSrc="https://bulma.io/images/placeholders/96x96.png"
+              />
+            ))
+          )}
         </div>
       </article>
     </div>
+  )
+}
+
+function Comment({
+  email,
+  body,
+  imgSrc,
+}: {
+  email?: string
+  body?: string
+  imgSrc?: string
+}) {
+  return (
+    <article className="media">
+      <figure className="media-left">
+        <p className="image is-48x48">
+          <img src={imgSrc} />
+        </p>
+      </figure>
+
+      <div className="media-content content">
+        <div className="content">
+          <strong>{email}</strong>
+          <p>{body}</p>
+        </div>
+      </div>
+    </article>
   )
 }

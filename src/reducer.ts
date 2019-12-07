@@ -17,10 +17,19 @@ export type RootState = {
       text: string
       keyword?: boolean
     }[]
+
+    commentsStatus: APIStatus
+    comments: {
+      postId: number
+      id: number
+      name: string
+      email: string
+      body: string
+    }[]
   }[]
 }
 
-type APIStatus = 'initial' | 'waiting' | 'loading' | 'complete' | 'error'
+export type APIStatus = 'initial' | 'waiting' | 'loading' | 'complete' | 'error'
 
 export type Actions =
   | {
@@ -46,12 +55,11 @@ export default function reducer(
   switch (action.type) {
     case 'Search.Posts.Input': {
       const { queryDraft } = action.payload
-      const queryDraftIsValid = Boolean(queryDraft.trim())
 
       return {
         ...state,
         queryDraft,
-        queryDraftIsValid,
+        queryDraftIsValid: Boolean(queryDraft.trim()),
       }
     }
 
