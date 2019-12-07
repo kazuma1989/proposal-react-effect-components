@@ -6,8 +6,16 @@ export type RootState = {
   posts: {
     userId: number
     id: number
-    title: string
-    body: string
+    titleRaw: string
+    title: {
+      text: string
+      keyword?: boolean
+    }[]
+    bodyRaw: string
+    body: {
+      text: string
+      keyword?: boolean
+    }[]
   }[]
 }
 
@@ -83,11 +91,25 @@ export default function reducer(
 
     case 'API.Posts.Complete': {
       const { posts } = action.payload
+      const { query } = state
 
       return {
         ...state,
         postsStatus: 'complete',
-        posts,
+        posts: posts.map(({ userId, id, title, body }) => ({
+          userId,
+          id,
+          titleRaw: title,
+          bodyRaw: body,
+          title: title
+            .split(query)
+            .flatMap(text => [{ text }, { text: query, keyword: true }])
+            .slice(0, -1),
+          body: body
+            .split(query)
+            .flatMap(text => [{ text }, { text: query, keyword: true }])
+            .slice(0, -1),
+        })),
       }
     }
 
