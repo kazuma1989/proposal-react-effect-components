@@ -4,7 +4,10 @@ import { Dispatch } from 'redux'
 import { RootState, Actions } from './reducer'
 
 export default function SearchInput() {
-  const queryDraft = useSelector((state: RootState) => state.queryDraft)
+  const [queryDraft, status] = useSelector((state: RootState) => [
+    state.queryDraft,
+    state.postsStatus,
+  ])
   const dispatch = useDispatch<Dispatch<Actions>>()
 
   return (
@@ -21,6 +24,7 @@ export default function SearchInput() {
             },
           })
         }
+        disabled={status === 'loading'}
         onSubmit={() =>
           dispatch({
             type: 'Search.Posts.Submit',
@@ -46,10 +50,12 @@ function Title({ children }: { children?: React.ReactNode }) {
 function SearchForm({
   text,
   onChange,
+  disabled,
   onSubmit,
 }: {
   text?: string
   onChange?(text: string): unknown
+  disabled?: boolean
   onSubmit?(): unknown
 }) {
   return (
@@ -65,7 +71,12 @@ function SearchForm({
         </p>
 
         <p className="control">
-          <button type="submit" className="button is-info" onClick={onSubmit}>
+          <button
+            type="submit"
+            className="button is-info"
+            disabled={disabled}
+            onClick={onSubmit}
+          >
             Search
           </button>
         </p>
