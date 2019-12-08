@@ -3,9 +3,10 @@ import { useSelector } from 'react-redux'
 import { RootState, APIStatus } from './reducer'
 
 export default function SearchResults() {
-  const [posts, status] = useSelector(
-    (state: RootState) => [state.posts, state.postsStatus] as const,
-  )
+  const [posts, status] = useSelector((state: RootState) => [
+    state.posts,
+    state.postsStatus,
+  ])
 
   return (
     <Container>

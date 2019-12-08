@@ -8,9 +8,10 @@ export default function SearchPostsAPI() {
   const store = useStore() as Store<RootState, Actions> & StoreExt
   useEffect(() => store.appendReducer(reducer), [])
 
-  const [query, status] = useSelector(
-    (state: RootState) => [state.query, state.postsStatus] as const,
-  )
+  const [query, status] = useSelector((state: RootState) => [
+    state.query,
+    state.postsStatus,
+  ])
   const dispatch = useDispatch<Dispatch<Actions>>()
   // or better
   // const dispatch = store.dispatch
