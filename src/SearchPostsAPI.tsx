@@ -39,6 +39,7 @@ export default function SearchPostsAPI() {
         dispatch({
           type: 'API.Posts.Complete',
           payload: {
+            query,
             posts,
           },
         })
@@ -65,6 +66,7 @@ type Actions =
   | {
       type: 'API.Posts.Complete'
       payload: {
+        query: string
         posts: {
           id: number
           userId: number
@@ -92,8 +94,7 @@ function reducer(state: RootState, action: Actions): RootState {
     }
 
     case 'API.Posts.Complete': {
-      const { posts } = action.payload
-      const { query } = state
+      const { query, posts } = action.payload
 
       return {
         ...state,
