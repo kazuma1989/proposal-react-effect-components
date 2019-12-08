@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState, APIStatus } from './reducer'
 
@@ -90,12 +90,13 @@ function Post({
   }[]
 }) {
   const titleRaw = title.map(v => v.text).join('')
+  const [showComments, setShowComments] = useState(false)
 
   return (
     <div className="box">
       <article className="media">
         <div className="media-left">
-          <figure className="image is-64x64">
+          <figure className="image is-128x128">
             <img src={imgSrc} alt={titleRaw} />
           </figure>
         </div>
@@ -125,15 +126,35 @@ function Post({
                 ),
               )}
             </p>
+
+            {(comments.length >= 1 || commentsStatus === 'loading') && (
+              <p className="has-text-right">
+                {showComments ? (
+                  <button
+                    type="button"
+                    className={`button is-outlined is-small ${
+                      commentsStatus === 'loading' ? 'is-loading' : ''
+                    }`}
+                    onClick={() => setShowComments(false)}
+                  >
+                    Hide comments
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className={`button is-outlined is-small ${
+                      commentsStatus === 'loading' ? 'is-loading' : ''
+                    }`}
+                    onClick={() => setShowComments(true)}
+                  >
+                    Show comments
+                  </button>
+                )}
+              </p>
+            )}
           </div>
 
-          {commentsStatus === 'error' ? (
-            <ErrorMessage>ERROR</ErrorMessage>
-          ) : commentsStatus === 'loading' ? (
-            <Loading />
-          ) : !comments.length ? (
-            <Empty />
-          ) : (
+          {showComments &&
             comments.map(({ id, email, body }) => (
               <Comment
                 key={id}
@@ -141,8 +162,7 @@ function Post({
                 body={body}
                 imgSrc="https://bulma.io/images/placeholders/96x96.png"
               />
-            ))
-          )}
+            ))}
         </div>
       </article>
     </div>
