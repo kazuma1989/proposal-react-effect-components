@@ -42,10 +42,13 @@ export default function SearchPostsAPI() {
             posts,
           },
         })
-      } catch (e) {
+      } catch (error) {
         dispatch({
           type: 'API.Posts.Error',
-          payload: e,
+          payload: {
+            query,
+            error,
+          },
           error: true,
         })
       }
@@ -72,7 +75,10 @@ type Actions =
     }
   | {
       type: 'API.Posts.Error'
-      payload: unknown
+      payload: {
+        query: string
+        error?: unknown
+      }
       error: true
     }
 

@@ -42,12 +42,12 @@ export default function SearchCommentsAPI() {
             comments,
           },
         })
-      } catch (e) {
+      } catch (error) {
         dispatch({
           type: 'API.Comments.Error',
           payload: {
             postId,
-            error: e,
+            error,
           },
           error: true,
         })
