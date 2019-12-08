@@ -28,6 +28,7 @@ export function SearchForm({
       <div className="field is-grouped">
         <p className="control is-expanded">
           <input
+            autoFocus
             className="input"
             type="text"
             value={text}
