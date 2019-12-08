@@ -3,13 +3,17 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Dispatch } from 'redux'
 import { Container, Title, SearchForm } from './components'
 import { RootState, Actions } from './reducer'
+import { shallowEqual } from './util'
 
 export default function SearchInput() {
-  const [queryDraft, valid, status] = useSelector((state: RootState) => [
-    state.queryDraft,
-    state.queryDraftIsValid,
-    state.postsStatus,
-  ])
+  const [queryDraft, valid, status] = useSelector(
+    (state: RootState) => [
+      state.queryDraft,
+      state.queryDraftIsValid,
+      state.postsStatus,
+    ],
+    shallowEqual,
+  )
   const dispatch = useDispatch<Dispatch<Actions>>()
 
   return (
