@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Dispatch } from 'redux'
-import { Container, Title, SearchForm } from './components'
+import { Container, Title, SearchForm } from '../../lib/components'
 import { RootState, Actions } from './reducer'
 import { shallowEqual } from './util'
 

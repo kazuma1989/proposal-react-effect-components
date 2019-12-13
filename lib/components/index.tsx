@@ -1,3 +1,6 @@
+/**
+ * Requires https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css
+ */
 import React, { useState } from 'react'
 
 export function Container({ children }: { children?: React.ReactNode }) {

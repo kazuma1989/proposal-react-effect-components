@@ -7,7 +7,7 @@ import {
   Loading,
   Empty,
   Post,
-} from './components'
+} from '../../lib/components'
 import { RootState } from './reducer'
 
 export default function SearchResults() {
