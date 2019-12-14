@@ -1,0 +1,405 @@
+Only in ../2-subtree-rendering: 1vs2.diff
+Only in .: 2vs3.diff
+diff -ur ../2-subtree-rendering/SearchCommentsAPI.tsx ./SearchCommentsAPI.tsx
+--- ../2-subtree-rendering/SearchCommentsAPI.tsx	2019-12-14 21:13:46.000000000 +0900
++++ ./SearchCommentsAPI.tsx	2019-12-14 22:58:13.000000000 +0900
+@@ -1,9 +1,12 @@
+ import { useEffect } from 'react'
+ import { useSelector, useDispatch } from 'react-redux'
+ import { Dispatch } from 'redux'
+-import { RootState, Actions } from './reducer'
++import { RootState } from './reducer'
++import appendReducer from './appendReducer'
+ 
+ export default function SearchCommentsAPI() {
++  useEffect(() => appendReducer(reducer), [])
++
+   const posts = useSelector((state: RootState) => state.posts)
+   const dispatch = useDispatch<Dispatch<Actions>>()
+ 
+@@ -53,3 +56,99 @@
+ 
+   return null
+ }
++
++type Actions =
++  | {
++      type: 'API.Comments.Start'
++      payload: {
++        postId: number
++      }
++    }
++  | {
++      type: 'API.Comments.Complete'
++      payload: {
++        postId: number
++        comments: {
++          postId: number
++          id: number
++          name: string
++          email: string
++          body: string
++        }[]
++      }
++    }
++  | {
++      type: 'API.Comments.Error'
++      payload: {
++        postId: number
++        error?: unknown
++      }
++      error: true
++    }
++
++export function reducer(state: RootState, action: Actions): RootState {
++  switch (action.type) {
++    case 'API.Comments.Start': {
++      const { postId } = action.payload
++      const { posts } = state
++
++      return {
++        ...state,
++        posts: posts.map(post => {
++          if (post.id !== postId) {
++            return post
++          }
++
++          return {
++            ...post,
++            commentsStatus: 'loading',
++          }
++        }),
++      }
++    }
++
++    case 'API.Comments.Complete': {
++      const { postId, comments } = action.payload
++      const { posts } = state
++
++      return {
++        ...state,
++        posts: posts.map(post => {
++          if (post.id !== postId) {
++            return post
++          }
++
++          return {
++            ...post,
++            commentsStatus: 'complete',
++            comments,
++          }
++        }),
++      }
++    }
++
++    case 'API.Comments.Error': {
++      const { postId } = action.payload
++      const { posts } = state
++
++      return {
++        ...state,
++        posts: posts.map(post => {
++          if (post.id !== postId) {
++            return post
++          }
++
++          return {
++            ...post,
++            commentsStatus: 'error',
++          }
++        }),
++      }
++    }
++
++    default: {
++      const _: never = action
++      return state
++    }
++  }
++}
+diff -ur ../2-subtree-rendering/SearchPostsAPI.tsx ./SearchPostsAPI.tsx
+--- ../2-subtree-rendering/SearchPostsAPI.tsx	2019-12-14 20:48:15.000000000 +0900
++++ ./SearchPostsAPI.tsx	2019-12-14 22:55:44.000000000 +0900
+@@ -1,9 +1,12 @@
+ import { useEffect } from 'react'
+ import { useSelector, useDispatch } from 'react-redux'
+ import { Dispatch } from 'redux'
+-import { RootState, Actions } from './reducer'
++import { RootState } from './reducer'
++import appendReducer from './appendReducer'
+ 
+ export default function SearchPostsAPI() {
++  useEffect(() => appendReducer(reducer), [])
++
+   const [query, status] = useSelector((state: RootState) => [
+     state.query,
+     state.postsStatus,
+@@ -52,3 +55,65 @@
+ 
+   return null
+ }
++
++type Actions =
++  | {
++      type: 'API.Posts.Start'
++    }
++  | {
++      type: 'API.Posts.Complete'
++      payload: {
++        query: string
++        posts: {
++          id: number
++          userId: number
++          title: string
++          body: string
++        }[]
++      }
++    }
++  | {
++      type: 'API.Posts.Error'
++      payload: {
++        query: string
++        error?: unknown
++      }
++      error: true
++    }
++
++export function reducer(state: RootState, action: Actions): RootState {
++  switch (action.type) {
++    case 'API.Posts.Start': {
++      return {
++        ...state,
++        postsStatus: 'loading',
++      }
++    }
++
++    case 'API.Posts.Complete': {
++      const { posts } = action.payload
++
++      return {
++        ...state,
++        postsStatus: 'complete',
++        posts: posts.map(post => ({
++          ...post,
++          commentsStatus: 'waiting',
++          comments: [],
++        })),
++      }
++    }
++
++    case 'API.Posts.Error': {
++      return {
++        ...state,
++        postsStatus: 'error',
++      }
++    }
++
++    default: {
++      const _: never = action
++      return state
++    }
++  }
++}
+Only in .: appendReducer.ts
+diff -ur ../2-subtree-rendering/index.tsx ./index.tsx
+--- ../2-subtree-rendering/index.tsx	2019-12-14 20:48:15.000000000 +0900
++++ ./index.tsx	2019-12-14 22:55:39.000000000 +0900
+@@ -1,9 +1,15 @@
+-import React from 'react'
++import React, { Suspense, lazy } from 'react'
+ import ReactDOM from 'react-dom'
+ import { Provider } from 'react-redux'
+ import { createStore } from 'redux'
+-import SearchApp from './SearchApp'
+-import reducer from './reducer'
++import baseReducer, { RootState } from './reducer'
++import { reducers } from './appendReducer'
++
++const SearchApp = lazy(() => import('./SearchApp'))
++
++reducers.push(baseReducer)
++const reducer = (state: RootState, action: any) =>
++  reducers.reduce((s, r) => r(s, action), state)
+ 
+ const preloadedState = undefined
+ const storeEnhancer = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.()
+@@ -11,7 +17,9 @@
+ 
+ ReactDOM.render(
+   <Provider store={store}>
+-    <SearchApp />
++    <Suspense fallback="Loading...">
++      <SearchApp />
++    </Suspense>
+   </Provider>,
+   document.getElementById('root'),
+ )
+diff -ur ../2-subtree-rendering/reducer.ts ./reducer.ts
+--- ../2-subtree-rendering/reducer.ts	2019-12-14 21:12:55.000000000 +0900
++++ ./reducer.ts	2019-12-14 21:58:49.000000000 +0900
+@@ -18,63 +18,12 @@
+   }[]
+ }
+ 
+-export type Actions =
+-  | {
+-      type: 'Search.Posts.Submit'
+-      payload: {
+-        query: string
+-      }
+-    }
+-  | {
+-      type: 'API.Posts.Start'
+-    }
+-  | {
+-      type: 'API.Posts.Complete'
+-      payload: {
+-        query: string
+-        posts: {
+-          id: number
+-          userId: number
+-          title: string
+-          body: string
+-        }[]
+-      }
+-    }
+-  | {
+-      type: 'API.Posts.Error'
+-      payload: {
+-        query: string
+-        error?: unknown
+-      }
+-      error: true
+-    }
+-  | {
+-      type: 'API.Comments.Start'
+-      payload: {
+-        postId: number
+-      }
+-    }
+-  | {
+-      type: 'API.Comments.Complete'
+-      payload: {
+-        postId: number
+-        comments: {
+-          postId: number
+-          id: number
+-          name: string
+-          email: string
+-          body: string
+-        }[]
+-      }
+-    }
+-  | {
+-      type: 'API.Comments.Error'
+-      payload: {
+-        postId: number
+-        error?: unknown
+-      }
+-      error: true
+-    }
++export type Actions = {
++  type: 'Search.Posts.Submit'
++  payload: {
++    query: string
++  }
++}
+ 
+ export default function reducer(
+   state: RootState | undefined = {
+@@ -99,94 +48,8 @@
+       }
+     }
+ 
+-    case 'API.Posts.Start': {
+-      return {
+-        ...state,
+-        postsStatus: 'loading',
+-      }
+-    }
+-
+-    case 'API.Posts.Complete': {
+-      const { posts } = action.payload
+-
+-      return {
+-        ...state,
+-        postsStatus: 'complete',
+-        posts: posts.map(post => ({
+-          ...post,
+-          commentsStatus: 'waiting',
+-          comments: [],
+-        })),
+-      }
+-    }
+-
+-    case 'API.Posts.Error': {
+-      return {
+-        ...state,
+-        postsStatus: 'error',
+-      }
+-    }
+-
+-    case 'API.Comments.Start': {
+-      const { postId } = action.payload
+-      const { posts } = state
+-
+-      return {
+-        ...state,
+-        posts: posts.map(post => {
+-          if (post.id !== postId) {
+-            return post
+-          }
+-
+-          return {
+-            ...post,
+-            commentsStatus: 'loading',
+-          }
+-        }),
+-      }
+-    }
+-
+-    case 'API.Comments.Complete': {
+-      const { postId, comments } = action.payload
+-      const { posts } = state
+-
+-      return {
+-        ...state,
+-        posts: posts.map(post => {
+-          if (post.id !== postId) {
+-            return post
+-          }
+-
+-          return {
+-            ...post,
+-            commentsStatus: 'complete',
+-            comments,
+-          }
+-        }),
+-      }
+-    }
+-
+-    case 'API.Comments.Error': {
+-      const { postId } = action.payload
+-      const { posts } = state
+-
+-      return {
+-        ...state,
+-        posts: posts.map(post => {
+-          if (post.id !== postId) {
+-            return post
+-          }
+-
+-          return {
+-            ...post,
+-            commentsStatus: 'error',
+-          }
+-        }),
+-      }
+-    }
+-
+     default: {
+-      const _: never = action
++      // const _: never = action
+       return state
+     }
+   }
