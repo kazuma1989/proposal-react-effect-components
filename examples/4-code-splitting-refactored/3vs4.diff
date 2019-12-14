@@ -1,0 +1,67 @@
+Only in ../3-code-splitting: 2vs3.diff
+Only in .: 3vs4.diff
+diff -ur ../3-code-splitting/SearchCommentsAPI.tsx ./SearchCommentsAPI.tsx
+--- ../3-code-splitting/SearchCommentsAPI.tsx	2019-12-14 22:58:13.000000000 +0900
++++ ./SearchCommentsAPI.tsx	2019-12-14 23:14:51.000000000 +0900
+@@ -1,11 +1,12 @@
+ import { useEffect } from 'react'
+-import { useSelector, useDispatch } from 'react-redux'
+-import { Dispatch } from 'redux'
++import { useSelector, useDispatch, useStore } from 'react-redux'
++import { Dispatch, Store } from 'redux'
+ import { RootState } from './reducer'
+-import appendReducer from './appendReducer'
++import { StoreExt } from './storeEnhancer'
+ 
+ export default function SearchCommentsAPI() {
+-  useEffect(() => appendReducer(reducer), [])
++  const store = useStore() as Store<RootState, Actions> & StoreExt
++  useEffect(() => store.appendReducer(reducer), [])
+ 
+   const posts = useSelector((state: RootState) => state.posts)
+   const dispatch = useDispatch<Dispatch<Actions>>()
+diff -ur ../3-code-splitting/SearchPostsAPI.tsx ./SearchPostsAPI.tsx
+--- ../3-code-splitting/SearchPostsAPI.tsx	2019-12-14 22:55:44.000000000 +0900
++++ ./SearchPostsAPI.tsx	2019-12-14 23:15:16.000000000 +0900
+@@ -1,11 +1,12 @@
+ import { useEffect } from 'react'
+-import { useSelector, useDispatch } from 'react-redux'
+-import { Dispatch } from 'redux'
++import { useSelector, useDispatch, useStore } from 'react-redux'
++import { Dispatch, Store } from 'redux'
+ import { RootState } from './reducer'
+-import appendReducer from './appendReducer'
++import { StoreExt } from './storeEnhancer'
+ 
+ export default function SearchPostsAPI() {
+-  useEffect(() => appendReducer(reducer), [])
++  const store = useStore() as Store<RootState, Actions> & StoreExt
++  useEffect(() => store.appendReducer(reducer), [])
+ 
+   const [query, status] = useSelector((state: RootState) => [
+     state.query,
+Only in ../3-code-splitting: appendReducer.ts
+diff -ur ../3-code-splitting/index.tsx ./index.tsx
+--- ../3-code-splitting/index.tsx	2019-12-14 23:24:40.000000000 +0900
++++ ./index.tsx	2019-12-14 23:23:00.000000000 +0900
+@@ -2,16 +2,11 @@
+ import ReactDOM from 'react-dom'
+ import { Provider } from 'react-redux'
+ import { createStore } from 'redux'
+-import reducer, { RootState } from './reducer'
+-import { reducers } from './appendReducer'
+-
+-reducers.push(reducer)
+-const composedReducer = (state: RootState, action: any) =>
+-  reducers.reduce((s, r) => r(s, action), state)
++import reducer from './reducer'
++import storeEnhancer from './storeEnhancer'
+ 
+ const preloadedState = undefined
+-const storeEnhancer = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.()
+-const store = createStore(composedReducer, preloadedState, storeEnhancer)
++const store = createStore(reducer, preloadedState, storeEnhancer)
+ 
+ const SearchApp = lazy(() => import('./SearchApp'))
+ 
+Only in .: storeEnhancer.ts

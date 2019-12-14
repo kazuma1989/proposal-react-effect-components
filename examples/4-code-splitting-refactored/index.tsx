@@ -2,16 +2,11 @@ import React, { Suspense, lazy } from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { createStore } from 'redux'
-import reducer, { RootState } from './reducer'
-import { reducers } from './appendReducer'
-
-reducers.push(reducer)
-const composedReducer = (state: RootState, action: any) =>
-  reducers.reduce((s, r) => r(s, action), state)
+import reducer from './reducer'
+import storeEnhancer from './storeEnhancer'
 
 const preloadedState = undefined
-const storeEnhancer = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.()
-const store = createStore(composedReducer, preloadedState, storeEnhancer)
+const store = createStore(reducer, preloadedState, storeEnhancer)
 
 const SearchApp = lazy(() => import('./SearchApp'))
 

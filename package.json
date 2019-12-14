@@ -7,6 +7,7 @@
     "start:1": "parcel ./examples/1-simple/index.html",
     "start:2": "parcel ./examples/2-subtree-rendering/index.html",
     "start:3": "parcel ./examples/3-code-splitting/index.html",
+    "start:4": "parcel ./examples/4-code-splitting-refactored/index.html",
     "start:9": "parcel ./examples/9-with-comments/index.html",
     "tsc": "tsc"
   },
