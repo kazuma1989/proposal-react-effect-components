@@ -153,30 +153,37 @@ export function Post({
               )}
             </p>
 
-            {(comments.length >= 1 || commentsStatus === 'loading') && (
+            {commentsStatus === 'loading' ? (
               <p className="has-text-right">
-                {showComments ? (
-                  <button
-                    type="button"
-                    className={`button is-outlined is-small ${
-                      commentsStatus === 'loading' ? 'is-loading' : ''
-                    }`}
-                    onClick={() => setShowComments(false)}
-                  >
-                    Hide comments
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    className={`button is-outlined is-small ${
-                      commentsStatus === 'loading' ? 'is-loading' : ''
-                    }`}
-                    onClick={() => setShowComments(true)}
-                  >
-                    Show comments
-                  </button>
-                )}
+                <button
+                  type="button"
+                  className="button is-outlined is-small is-loading"
+                >
+                  Loading
+                </button>
               </p>
+            ) : (
+              comments.length >= 1 && (
+                <p className="has-text-right">
+                  {showComments ? (
+                    <button
+                      type="button"
+                      className="button is-outlined is-small"
+                      onClick={() => setShowComments(false)}
+                    >
+                      Hide comments
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="button is-outlined is-small"
+                      onClick={() => setShowComments(true)}
+                    >
+                      Show comments
+                    </button>
+                  )}
+                </p>
+              )
             )}
           </div>
 
