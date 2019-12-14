@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start:1": "parcel ./examples/1-simple/index.html",
+    "start:2": "parcel ./examples/2-subtree-rendering/index.html",
     "start:9": "parcel ./examples/9-with-comments/index.html",
     "tsc": "tsc"
   },

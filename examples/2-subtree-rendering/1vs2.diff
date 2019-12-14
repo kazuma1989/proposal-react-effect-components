@@ -1,0 +1,170 @@
+Only in .: 1vs2.diff
+diff -ur ../1-simple/SearchApp.tsx ./SearchApp.tsx
+--- ../1-simple/SearchApp.tsx	2019-12-14 21:17:44.000000000 +0900
++++ ./SearchApp.tsx	2019-12-14 21:21:33.000000000 +0900
+@@ -2,11 +2,13 @@
+ import SearchPostsAPI from './SearchPostsAPI'
+ import SearchInput from './SearchInput'
+ import SearchResults from './SearchResults'
++import SearchCommentsAPI from './SearchCommentsAPI'
+ 
+ export default function SearchApp() {
+   return (
+     <>
+       <SearchPostsAPI />
++      <SearchCommentsAPI />
+ 
+       <SearchInput />
+       <SearchResults />
+Only in .: SearchCommentsAPI.tsx
+diff -ur ../1-simple/SearchResults.tsx ./SearchResults.tsx
+--- ../1-simple/SearchResults.tsx	2019-12-14 16:29:12.000000000 +0900
++++ ./SearchResults.tsx	2019-12-14 21:28:48.000000000 +0900
+@@ -10,8 +10,14 @@
+     <Container>
+       <Title>Results</Title>
+ 
+-      {posts.map(({ id, title, body }) => (
+-        <Post key={id} title={title} body={body} />
++      {posts.map(({ id, title, body, commentsStatus, comments }) => (
++        <Post
++          key={id}
++          title={title}
++          body={body}
++          commentsStatus={commentsStatus}
++          comments={comments}
++        />
+       ))}
+     </Container>
+   )
+diff -ur ../1-simple/reducer.ts ./reducer.ts
+--- ../1-simple/reducer.ts	2019-12-14 16:51:48.000000000 +0900
++++ ./reducer.ts	2019-12-14 21:12:55.000000000 +0900
+@@ -6,6 +6,15 @@
+     id: number
+     title: string
+     body: string
++
++    commentsStatus: 'initial' | 'waiting' | 'loading' | 'complete' | 'error'
++    comments: {
++      postId: number
++      id: number
++      name: string
++      email: string
++      body: string
++    }[]
+   }[]
+ }
+ 
+@@ -39,6 +48,33 @@
+       }
+       error: true
+     }
++  | {
++      type: 'API.Comments.Start'
++      payload: {
++        postId: number
++      }
++    }
++  | {
++      type: 'API.Comments.Complete'
++      payload: {
++        postId: number
++        comments: {
++          postId: number
++          id: number
++          name: string
++          email: string
++          body: string
++        }[]
++      }
++    }
++  | {
++      type: 'API.Comments.Error'
++      payload: {
++        postId: number
++        error?: unknown
++      }
++      error: true
++    }
+ 
+ export default function reducer(
+   state: RootState | undefined = {
+@@ -76,7 +112,11 @@
+       return {
+         ...state,
+         postsStatus: 'complete',
+-        posts,
++        posts: posts.map(post => ({
++          ...post,
++          commentsStatus: 'waiting',
++          comments: [],
++        })),
+       }
+     }
+ 
+@@ -87,6 +127,64 @@
+       }
+     }
+ 
++    case 'API.Comments.Start': {
++      const { postId } = action.payload
++      const { posts } = state
++
++      return {
++        ...state,
++        posts: posts.map(post => {
++          if (post.id !== postId) {
++            return post
++          }
++
++          return {
++            ...post,
++            commentsStatus: 'loading',
++          }
++        }),
++      }
++    }
++
++    case 'API.Comments.Complete': {
++      const { postId, comments } = action.payload
++      const { posts } = state
++
++      return {
++        ...state,
++        posts: posts.map(post => {
++          if (post.id !== postId) {
++            return post
++          }
++
++          return {
++            ...post,
++            commentsStatus: 'complete',
++            comments,
++          }
++        }),
++      }
++    }
++
++    case 'API.Comments.Error': {
++      const { postId } = action.payload
++      const { posts } = state
++
++      return {
++        ...state,
++        posts: posts.map(post => {
++          if (post.id !== postId) {
++            return post
++          }
++
++          return {
++            ...post,
++            commentsStatus: 'error',
++          }
++        }),
++      }
++    }
++
+     default: {
+       const _: never = action
+       return state
