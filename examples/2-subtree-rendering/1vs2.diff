@@ -1,7 +1,7 @@
 Only in .: 1vs2.diff
 diff -ur ../1-simple/SearchApp.tsx ./SearchApp.tsx
 --- ../1-simple/SearchApp.tsx	2019-12-14 21:17:44.000000000 +0900
-+++ ./SearchApp.tsx	2019-12-14 21:21:33.000000000 +0900
++++ ./SearchApp.tsx	2019-12-14 21:42:02.000000000 +0900
 @@ -2,11 +2,13 @@
  import SearchPostsAPI from './SearchPostsAPI'
  import SearchInput from './SearchInput'
