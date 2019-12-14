@@ -4,8 +4,8 @@
   "author": "kazuma1989 <kazuma.ebina@quipper.com>",
   "license": "MIT",
   "scripts": {
-    "start": "parcel ./examples/9-with-comments/index.html",
-    "build": "parcel build ./src/index.html",
+    "start:1": "parcel ./examples/1-simple/index.html",
+    "start:9": "parcel ./examples/9-with-comments/index.html",
     "tsc": "tsc"
   },
   "browserslist": [

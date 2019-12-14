@@ -75,20 +75,24 @@ export function Empty() {
 }
 
 export function Post({
-  title = [],
-  body = [],
-  imgSrc,
+  title: _title = [],
+  body: _body = [],
+  imgSrc = 'https://bulma.io/images/placeholders/128x128.png',
   commentsStatus = 'initial',
   comments = [],
 }: {
-  title?: {
-    text: string
-    keyword?: boolean
-  }[]
-  body?: {
-    text: string
-    keyword?: boolean
-  }[]
+  title?:
+    | string
+    | {
+        text: string
+        keyword?: boolean
+      }[]
+  body?:
+    | string
+    | {
+        text: string
+        keyword?: boolean
+      }[]
   imgSrc?: string
   commentsStatus?: 'initial' | 'waiting' | 'loading' | 'complete' | 'error'
   comments?: {
@@ -98,6 +102,19 @@ export function Post({
     body: string
   }[]
 }) {
+  const title = (() => {
+    if (typeof _title === 'string') {
+      return [{ text: _title }]
+    }
+    return _title
+  })()
+  const body = (() => {
+    if (typeof _body === 'string') {
+      return [{ text: _body }]
+    }
+    return _body
+  })()
+
   const titleRaw = title.map(v => v.text).join('')
   const [showComments, setShowComments] = useState(false)
 
