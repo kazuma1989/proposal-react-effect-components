@@ -2,8 +2,11 @@ import { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Dispatch } from 'redux'
 import { RootState } from './reducer'
+import appendReducer from './appendReducer'
 
 export default function SearchCommentsAPI() {
+  useEffect(() => appendReducer(reducer), [])
+
   const posts = useSelector((state: RootState) => state.posts)
   const dispatch = useDispatch<Dispatch<Actions>>()
 

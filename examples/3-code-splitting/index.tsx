@@ -3,16 +3,13 @@ import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { createStore } from 'redux'
 import baseReducer, { RootState } from './reducer'
-import { reducer as searchPostsReducer } from './SearchPostsAPI'
-import { reducer as searchCommentsReducer } from './SearchCommentsAPI'
+import { reducers } from './appendReducer'
 
 const SearchApp = lazy(() => import('./SearchApp'))
 
+reducers.push(baseReducer)
 const reducer = (state: RootState, action: any) =>
-  [baseReducer, searchPostsReducer, searchCommentsReducer].reduce(
-    (s, r) => r(s, action),
-    state,
-  )
+  reducers.reduce((s, r) => r(s, action), state)
 
 const preloadedState = undefined
 const storeEnhancer = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.()
