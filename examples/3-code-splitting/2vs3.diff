@@ -203,8 +203,8 @@ diff -ur ../2-subtree-rendering/SearchPostsAPI.tsx ./SearchPostsAPI.tsx
 Only in .: appendReducer.ts
 diff -ur ../2-subtree-rendering/index.tsx ./index.tsx
 --- ../2-subtree-rendering/index.tsx	2019-12-14 20:48:15.000000000 +0900
-+++ ./index.tsx	2019-12-14 22:55:39.000000000 +0900
-@@ -1,9 +1,15 @@
++++ ./index.tsx	2019-12-14 23:06:04.000000000 +0900
+@@ -1,17 +1,25 @@
 -import React from 'react'
 +import React, { Suspense, lazy } from 'react'
  import ReactDOM from 'react-dom'
@@ -212,18 +212,19 @@ diff -ur ../2-subtree-rendering/index.tsx ./index.tsx
  import { createStore } from 'redux'
 -import SearchApp from './SearchApp'
 -import reducer from './reducer'
-+import baseReducer, { RootState } from './reducer'
++import reducer, { RootState } from './reducer'
 +import { reducers } from './appendReducer'
 +
 +const SearchApp = lazy(() => import('./SearchApp'))
 +
-+reducers.push(baseReducer)
-+const reducer = (state: RootState, action: any) =>
++reducers.push(reducer)
++const composedReducer = (state: RootState, action: any) =>
 +  reducers.reduce((s, r) => r(s, action), state)
  
  const preloadedState = undefined
  const storeEnhancer = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.()
-@@ -11,7 +17,9 @@
+-const store = createStore(reducer, preloadedState, storeEnhancer)
++const store = createStore(composedReducer, preloadedState, storeEnhancer)
  
  ReactDOM.render(
    <Provider store={store}>
