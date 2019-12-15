@@ -1,5 +1,6 @@
 Only in examples/4-code-splitting-refactored: 3vs4.diff
 Only in examples/5-with-immer: 4vs5.diff
+Only in examples/5-with-immer: APIFetchComments.test.tsx
 diff -ur examples/4-code-splitting-refactored/APIFetchComments.tsx examples/5-with-immer/APIFetchComments.tsx
 --- examples/4-code-splitting-refactored/APIFetchComments.tsx	2019-12-15 16:29:03.000000000 +0900
 +++ examples/5-with-immer/APIFetchComments.tsx	2019-12-15 16:29:03.000000000 +0900
@@ -105,6 +106,7 @@ diff -ur examples/4-code-splitting-refactored/APIFetchComments.tsx examples/5-wi
    }
 -}
 +})
+Only in examples/5-with-immer: APISearchPosts.test.tsx
 diff -ur examples/4-code-splitting-refactored/APISearchPosts.tsx examples/5-with-immer/APISearchPosts.tsx
 --- examples/4-code-splitting-refactored/APISearchPosts.tsx	2019-12-15 12:40:17.000000000 +0900
 +++ examples/5-with-immer/APISearchPosts.tsx	2019-12-15 12:40:17.000000000 +0900
@@ -175,6 +177,7 @@ diff -ur examples/4-code-splitting-refactored/APISearchPosts.tsx examples/5-with
    }
 -}
 +})
+Only in examples/5-with-immer: reducer.test.ts
 diff -ur examples/4-code-splitting-refactored/reducer.ts examples/5-with-immer/reducer.ts
 --- examples/4-code-splitting-refactored/reducer.ts	2019-12-14 23:09:13.000000000 +0900
 +++ examples/5-with-immer/reducer.ts	2019-12-15 12:08:27.000000000 +0900
