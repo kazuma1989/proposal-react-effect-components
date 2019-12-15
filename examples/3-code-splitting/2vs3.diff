@@ -1,8 +1,8 @@
 Only in examples/2-subtree-rendering: 1vs2.diff
 Only in examples/3-code-splitting: 2vs3.diff
-diff -ur examples/2-subtree-rendering/SearchCommentsAPI.tsx examples/3-code-splitting/SearchCommentsAPI.tsx
---- examples/2-subtree-rendering/SearchCommentsAPI.tsx	2019-12-14 21:13:46.000000000 +0900
-+++ examples/3-code-splitting/SearchCommentsAPI.tsx	2019-12-14 22:58:13.000000000 +0900
+diff -ur examples/2-subtree-rendering/APISearchComments.tsx examples/3-code-splitting/APISearchComments.tsx
+--- examples/2-subtree-rendering/APISearchComments.tsx	2019-12-15 12:40:42.000000000 +0900
++++ examples/3-code-splitting/APISearchComments.tsx	2019-12-15 12:40:42.000000000 +0900
 @@ -1,9 +1,12 @@
  import { useEffect } from 'react'
  import { useSelector, useDispatch } from 'react-redux'
@@ -11,7 +11,7 @@ diff -ur examples/2-subtree-rendering/SearchCommentsAPI.tsx examples/3-code-spli
 +import { RootState } from './reducer'
 +import appendReducer from './appendReducer'
  
- export default function SearchCommentsAPI() {
+ export default function APISearchComments() {
 +  useEffect(() => appendReducer(reducer), [])
 +
    const posts = useSelector((state: RootState) => state.posts)
@@ -117,9 +117,9 @@ diff -ur examples/2-subtree-rendering/SearchCommentsAPI.tsx examples/3-code-spli
 +    }
 +  }
 +}
-diff -ur examples/2-subtree-rendering/SearchPostsAPI.tsx examples/3-code-splitting/SearchPostsAPI.tsx
---- examples/2-subtree-rendering/SearchPostsAPI.tsx	2019-12-14 20:48:15.000000000 +0900
-+++ examples/3-code-splitting/SearchPostsAPI.tsx	2019-12-14 22:55:44.000000000 +0900
+diff -ur examples/2-subtree-rendering/APISearchPosts.tsx examples/3-code-splitting/APISearchPosts.tsx
+--- examples/2-subtree-rendering/APISearchPosts.tsx	2019-12-15 12:40:17.000000000 +0900
++++ examples/3-code-splitting/APISearchPosts.tsx	2019-12-15 12:40:17.000000000 +0900
 @@ -1,9 +1,12 @@
  import { useEffect } from 'react'
  import { useSelector, useDispatch } from 'react-redux'
@@ -128,7 +128,7 @@ diff -ur examples/2-subtree-rendering/SearchPostsAPI.tsx examples/3-code-splitti
 +import { RootState } from './reducer'
 +import appendReducer from './appendReducer'
  
- export default function SearchPostsAPI() {
+ export default function APISearchPosts() {
 +  useEffect(() => appendReducer(reducer), [])
 +
    const [query, status] = useSelector((state: RootState) => [

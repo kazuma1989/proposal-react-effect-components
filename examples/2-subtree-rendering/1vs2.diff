@@ -1,23 +1,23 @@
 Only in examples/2-subtree-rendering: 1vs2.diff
+Only in examples/2-subtree-rendering: APISearchComments.tsx
 diff -ur examples/1-simple/SearchApp.tsx examples/2-subtree-rendering/SearchApp.tsx
---- examples/1-simple/SearchApp.tsx	2019-12-14 21:17:44.000000000 +0900
-+++ examples/2-subtree-rendering/SearchApp.tsx	2019-12-14 23:36:28.000000000 +0900
+--- examples/1-simple/SearchApp.tsx	2019-12-15 12:40:17.000000000 +0900
++++ examples/2-subtree-rendering/SearchApp.tsx	2019-12-15 12:40:42.000000000 +0900
 @@ -1,5 +1,6 @@
  import React from 'react'
- import SearchPostsAPI from './SearchPostsAPI'
-+import SearchCommentsAPI from './SearchCommentsAPI'
+ import APISearchPosts from './APISearchPosts'
++import APISearchComments from './APISearchComments'
  import SearchInput from './SearchInput'
  import SearchResults from './SearchResults'
  
 @@ -7,6 +8,7 @@
    return (
      <>
-       <SearchPostsAPI />
-+      <SearchCommentsAPI />
+       <APISearchPosts />
++      <APISearchComments />
  
        <SearchInput />
        <SearchResults />
-Only in examples/2-subtree-rendering: SearchCommentsAPI.tsx
 diff -ur examples/1-simple/SearchResults.tsx examples/2-subtree-rendering/SearchResults.tsx
 --- examples/1-simple/SearchResults.tsx	2019-12-14 16:29:12.000000000 +0900
 +++ examples/2-subtree-rendering/SearchResults.tsx	2019-12-14 21:28:48.000000000 +0900
