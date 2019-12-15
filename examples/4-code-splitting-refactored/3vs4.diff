@@ -1,8 +1,8 @@
-Only in ../3-code-splitting: 2vs3.diff
-Only in .: 3vs4.diff
-diff -ur ../3-code-splitting/SearchCommentsAPI.tsx ./SearchCommentsAPI.tsx
---- ../3-code-splitting/SearchCommentsAPI.tsx	2019-12-14 22:58:13.000000000 +0900
-+++ ./SearchCommentsAPI.tsx	2019-12-14 23:14:51.000000000 +0900
+Only in examples/3-code-splitting: 2vs3.diff
+Only in examples/4-code-splitting-refactored: 3vs4.diff
+diff -ur examples/3-code-splitting/SearchCommentsAPI.tsx examples/4-code-splitting-refactored/SearchCommentsAPI.tsx
+--- examples/3-code-splitting/SearchCommentsAPI.tsx	2019-12-14 22:58:13.000000000 +0900
++++ examples/4-code-splitting-refactored/SearchCommentsAPI.tsx	2019-12-14 23:14:51.000000000 +0900
 @@ -1,11 +1,12 @@
  import { useEffect } from 'react'
 -import { useSelector, useDispatch } from 'react-redux'
@@ -20,9 +20,9 @@ diff -ur ../3-code-splitting/SearchCommentsAPI.tsx ./SearchCommentsAPI.tsx
  
    const posts = useSelector((state: RootState) => state.posts)
    const dispatch = useDispatch<Dispatch<Actions>>()
-diff -ur ../3-code-splitting/SearchPostsAPI.tsx ./SearchPostsAPI.tsx
---- ../3-code-splitting/SearchPostsAPI.tsx	2019-12-14 22:55:44.000000000 +0900
-+++ ./SearchPostsAPI.tsx	2019-12-14 23:15:16.000000000 +0900
+diff -ur examples/3-code-splitting/SearchPostsAPI.tsx examples/4-code-splitting-refactored/SearchPostsAPI.tsx
+--- examples/3-code-splitting/SearchPostsAPI.tsx	2019-12-14 22:55:44.000000000 +0900
++++ examples/4-code-splitting-refactored/SearchPostsAPI.tsx	2019-12-14 23:15:16.000000000 +0900
 @@ -1,11 +1,12 @@
  import { useEffect } from 'react'
 -import { useSelector, useDispatch } from 'react-redux'
@@ -40,10 +40,10 @@ diff -ur ../3-code-splitting/SearchPostsAPI.tsx ./SearchPostsAPI.tsx
  
    const [query, status] = useSelector((state: RootState) => [
      state.query,
-Only in ../3-code-splitting: appendReducer.ts
-diff -ur ../3-code-splitting/index.tsx ./index.tsx
---- ../3-code-splitting/index.tsx	2019-12-14 23:24:40.000000000 +0900
-+++ ./index.tsx	2019-12-14 23:23:00.000000000 +0900
+Only in examples/3-code-splitting: appendReducer.ts
+diff -ur examples/3-code-splitting/index.tsx examples/4-code-splitting-refactored/index.tsx
+--- examples/3-code-splitting/index.tsx	2019-12-14 23:24:40.000000000 +0900
++++ examples/4-code-splitting-refactored/index.tsx	2019-12-14 23:23:00.000000000 +0900
 @@ -2,16 +2,11 @@
  import ReactDOM from 'react-dom'
  import { Provider } from 'react-redux'
@@ -64,4 +64,4 @@ diff -ur ../3-code-splitting/index.tsx ./index.tsx
  
  const SearchApp = lazy(() => import('./SearchApp'))
  
-Only in .: storeEnhancer.ts
+Only in examples/4-code-splitting-refactored: storeEnhancer.ts

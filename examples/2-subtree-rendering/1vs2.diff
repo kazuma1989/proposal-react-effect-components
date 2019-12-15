@@ -1,7 +1,7 @@
-Only in .: 1vs2.diff
-diff -ur ../1-simple/SearchApp.tsx ./SearchApp.tsx
---- ../1-simple/SearchApp.tsx	2019-12-14 21:17:44.000000000 +0900
-+++ ./SearchApp.tsx	2019-12-14 23:36:28.000000000 +0900
+Only in examples/2-subtree-rendering: 1vs2.diff
+diff -ur examples/1-simple/SearchApp.tsx examples/2-subtree-rendering/SearchApp.tsx
+--- examples/1-simple/SearchApp.tsx	2019-12-14 21:17:44.000000000 +0900
++++ examples/2-subtree-rendering/SearchApp.tsx	2019-12-14 23:36:28.000000000 +0900
 @@ -1,5 +1,6 @@
  import React from 'react'
  import SearchPostsAPI from './SearchPostsAPI'
@@ -17,10 +17,10 @@ diff -ur ../1-simple/SearchApp.tsx ./SearchApp.tsx
  
        <SearchInput />
        <SearchResults />
-Only in .: SearchCommentsAPI.tsx
-diff -ur ../1-simple/SearchResults.tsx ./SearchResults.tsx
---- ../1-simple/SearchResults.tsx	2019-12-14 16:29:12.000000000 +0900
-+++ ./SearchResults.tsx	2019-12-14 21:28:48.000000000 +0900
+Only in examples/2-subtree-rendering: SearchCommentsAPI.tsx
+diff -ur examples/1-simple/SearchResults.tsx examples/2-subtree-rendering/SearchResults.tsx
+--- examples/1-simple/SearchResults.tsx	2019-12-14 16:29:12.000000000 +0900
++++ examples/2-subtree-rendering/SearchResults.tsx	2019-12-14 21:28:48.000000000 +0900
 @@ -10,8 +10,14 @@
      <Container>
        <Title>Results</Title>
@@ -38,9 +38,9 @@ diff -ur ../1-simple/SearchResults.tsx ./SearchResults.tsx
        ))}
      </Container>
    )
-diff -ur ../1-simple/reducer.ts ./reducer.ts
---- ../1-simple/reducer.ts	2019-12-14 16:51:48.000000000 +0900
-+++ ./reducer.ts	2019-12-14 21:12:55.000000000 +0900
+diff -ur examples/1-simple/reducer.ts examples/2-subtree-rendering/reducer.ts
+--- examples/1-simple/reducer.ts	2019-12-14 16:51:48.000000000 +0900
++++ examples/2-subtree-rendering/reducer.ts	2019-12-14 21:12:55.000000000 +0900
 @@ -6,6 +6,15 @@
      id: number
      title: string

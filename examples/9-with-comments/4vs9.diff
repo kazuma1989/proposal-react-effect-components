@@ -1,0 +1,346 @@
+Only in examples/4-code-splitting-refactored: 3vs4.diff
+Only in examples/9-with-comments: 4vs9.diff
+Only in examples/9-with-comments: App.tsx
+diff -ur examples/4-code-splitting-refactored/SearchCommentsAPI.tsx examples/9-with-comments/SearchCommentsAPI.tsx
+--- examples/4-code-splitting-refactored/SearchCommentsAPI.tsx	2019-12-14 23:14:51.000000000 +0900
++++ examples/9-with-comments/SearchCommentsAPI.tsx	2019-12-13 12:32:31.000000000 +0900
+@@ -1,6 +1,6 @@
+ import { useEffect } from 'react'
+-import { useSelector, useDispatch, useStore } from 'react-redux'
+-import { Dispatch, Store } from 'redux'
++import { useSelector, useStore } from 'react-redux'
++import { Store } from 'redux'
+ import { RootState } from './reducer'
+ import { StoreExt } from './storeEnhancer'
+ 
+@@ -9,7 +9,7 @@
+   useEffect(() => store.appendReducer(reducer), [])
+ 
+   const posts = useSelector((state: RootState) => state.posts)
+-  const dispatch = useDispatch<Dispatch<Actions>>()
++  const dispatch = store.dispatch
+ 
+   useEffect(() => {
+     posts.forEach(async ({ id: postId, commentsStatus }) => {
+@@ -87,7 +87,7 @@
+       error: true
+     }
+ 
+-export function reducer(state: RootState, action: Actions): RootState {
++function reducer(state: RootState, action: Actions): RootState {
+   switch (action.type) {
+     case 'API.Comments.Start': {
+       const { postId } = action.payload
+@@ -129,22 +129,7 @@
+     }
+ 
+     case 'API.Comments.Error': {
+-      const { postId } = action.payload
+-      const { posts } = state
+-
+-      return {
+-        ...state,
+-        posts: posts.map(post => {
+-          if (post.id !== postId) {
+-            return post
+-          }
+-
+-          return {
+-            ...post,
+-            commentsStatus: 'error',
+-          }
+-        }),
+-      }
++      return state
+     }
+ 
+     default: {
+diff -ur examples/4-code-splitting-refactored/SearchInput.tsx examples/9-with-comments/SearchInput.tsx
+--- examples/4-code-splitting-refactored/SearchInput.tsx	2019-12-14 23:09:13.000000000 +0900
++++ examples/9-with-comments/SearchInput.tsx	2019-12-14 15:04:47.000000000 +0900
+@@ -1,31 +1,41 @@
+-import React, { useState } from 'react'
++import React from 'react'
+ import { useSelector, useDispatch } from 'react-redux'
+ import { Dispatch } from 'redux'
+ import { Container, Title, SearchForm } from '../../lib/components'
+ import { RootState, Actions } from './reducer'
++import { shallowEqual } from './util'
+ 
+ export default function SearchInput() {
+-  const status = useSelector((state: RootState) => state.postsStatus)
++  const [queryDraft, valid, status] = useSelector(
++    (state: RootState) => [
++      state.queryDraft,
++      state.queryDraftIsValid,
++      state.postsStatus,
++    ],
++    shallowEqual,
++  )
+   const dispatch = useDispatch<Dispatch<Actions>>()
+ 
+-  const [query, setQuery] = useState('')
+-
+   return (
+     <Container>
+       <Title>Search posts</Title>
+ 
+       <SearchForm
+-        text={query}
+-        onChange={setQuery}
+-        disabled={status === 'loading'}
+-        onSubmit={() =>
++        text={queryDraft}
++        onChange={queryDraft =>
+           dispatch({
+-            type: 'Search.Posts.Submit',
++            type: 'Search.Posts.Input',
+             payload: {
+-              query,
++              queryDraft,
+             },
+           })
+         }
++        disabled={status === 'loading' || !valid}
++        onSubmit={() =>
++          dispatch({
++            type: 'Search.Posts.Submit',
++          })
++        }
+       />
+     </Container>
+   )
+diff -ur examples/4-code-splitting-refactored/SearchPostsAPI.tsx examples/9-with-comments/SearchPostsAPI.tsx
+--- examples/4-code-splitting-refactored/SearchPostsAPI.tsx	2019-12-14 23:15:16.000000000 +0900
++++ examples/9-with-comments/SearchPostsAPI.tsx	2019-12-13 12:32:31.000000000 +0900
+@@ -13,6 +13,8 @@
+     state.postsStatus,
+   ])
+   const dispatch = useDispatch<Dispatch<Actions>>()
++  // or better
++  // const dispatch = store.dispatch
+ 
+   useEffect(() => {
+     ;(async () => {
+@@ -82,7 +84,7 @@
+       error: true
+     }
+ 
+-export function reducer(state: RootState, action: Actions): RootState {
++function reducer(state: RootState, action: Actions): RootState {
+   switch (action.type) {
+     case 'API.Posts.Start': {
+       return {
+@@ -92,13 +94,25 @@
+     }
+ 
+     case 'API.Posts.Complete': {
+-      const { posts } = action.payload
++      const { query, posts } = action.payload
+ 
+       return {
+         ...state,
+         postsStatus: 'complete',
+-        posts: posts.map(post => ({
+-          ...post,
++        posts: posts.map(({ userId, id, title, body }) => ({
++          userId,
++          id,
++          titleRaw: title,
++          bodyRaw: body,
++          title: title
++            .split(query)
++            .flatMap(text => [{ text }, { text: query, keyword: true }])
++            .slice(0, -1),
++          body: body
++            .split(query)
++            .flatMap(text => [{ text }, { text: query, keyword: true }])
++            .slice(0, -1),
++
+           commentsStatus: 'waiting',
+           comments: [],
+         })),
+diff -ur examples/4-code-splitting-refactored/SearchResults.tsx examples/9-with-comments/SearchResults.tsx
+--- examples/4-code-splitting-refactored/SearchResults.tsx	2019-12-14 23:09:13.000000000 +0900
++++ examples/9-with-comments/SearchResults.tsx	2019-12-14 15:04:47.000000000 +0900
+@@ -1,24 +1,43 @@
+ import React from 'react'
+ import { useSelector } from 'react-redux'
+-import { Container, Title, Post } from '../../lib/components'
++import {
++  Container,
++  Title,
++  ErrorMessage,
++  Loading,
++  Empty,
++  Post,
++} from '../../lib/components'
+ import { RootState } from './reducer'
+ 
+ export default function SearchResults() {
+-  const posts = useSelector((state: RootState) => state.posts)
++  const [posts, status] = useSelector((state: RootState) => [
++    state.posts,
++    state.postsStatus,
++  ])
+ 
+   return (
+     <Container>
+       <Title>Results</Title>
+ 
+-      {posts.map(({ id, title, body, commentsStatus, comments }) => (
+-        <Post
+-          key={id}
+-          title={title}
+-          body={body}
+-          commentsStatus={commentsStatus}
+-          comments={comments}
+-        />
+-      ))}
++      {status === 'error' ? (
++        <ErrorMessage>ERROR</ErrorMessage>
++      ) : status === 'loading' ? (
++        <Loading />
++      ) : !posts.length ? (
++        <Empty />
++      ) : (
++        posts.map(({ id, title, body, comments, commentsStatus }) => (
++          <Post
++            key={id}
++            title={title}
++            body={body}
++            imgSrc="https://bulma.io/images/placeholders/128x128.png"
++            commentsStatus={commentsStatus}
++            comments={comments}
++          />
++        ))
++      )}
+     </Container>
+   )
+ }
+diff -ur examples/4-code-splitting-refactored/index.tsx examples/9-with-comments/index.tsx
+--- examples/4-code-splitting-refactored/index.tsx	2019-12-14 23:23:00.000000000 +0900
++++ examples/9-with-comments/index.tsx	2019-12-13 12:32:31.000000000 +0900
+@@ -1,20 +1,17 @@
+-import React, { Suspense, lazy } from 'react'
++import React from 'react'
+ import ReactDOM from 'react-dom'
+ import { Provider } from 'react-redux'
+ import { createStore } from 'redux'
++import App from './App'
+ import reducer from './reducer'
+ import storeEnhancer from './storeEnhancer'
+ 
+ const preloadedState = undefined
+ const store = createStore(reducer, preloadedState, storeEnhancer)
+ 
+-const SearchApp = lazy(() => import('./SearchApp'))
+-
+ ReactDOM.render(
+   <Provider store={store}>
+-    <Suspense fallback="Loading...">
+-      <SearchApp />
+-    </Suspense>
++    <App />
+   </Provider>,
+   document.getElementById('root'),
+ )
+diff -ur examples/4-code-splitting-refactored/reducer.ts examples/9-with-comments/reducer.ts
+--- examples/4-code-splitting-refactored/reducer.ts	2019-12-14 23:09:13.000000000 +0900
++++ examples/9-with-comments/reducer.ts	2019-12-13 12:32:31.000000000 +0900
+@@ -1,13 +1,24 @@
+ export type RootState = {
++  queryDraft: string
++  queryDraftIsValid: boolean
+   query: string
+-  postsStatus: 'initial' | 'waiting' | 'loading' | 'complete' | 'error'
++
++  postsStatus: APIStatus
+   posts: {
+     userId: number
+     id: number
+-    title: string
+-    body: string
++    titleRaw: string
++    title: {
++      text: string
++      keyword?: boolean
++    }[]
++    bodyRaw: string
++    body: {
++      text: string
++      keyword?: boolean
++    }[]
+ 
+-    commentsStatus: 'initial' | 'waiting' | 'loading' | 'complete' | 'error'
++    commentsStatus: APIStatus
+     comments: {
+       postId: number
+       id: number
+@@ -18,15 +29,23 @@
+   }[]
+ }
+ 
+-export type Actions = {
+-  type: 'Search.Posts.Submit'
+-  payload: {
+-    query: string
+-  }
+-}
++export type APIStatus = 'initial' | 'waiting' | 'loading' | 'complete' | 'error'
++
++export type Actions =
++  | {
++      type: 'Search.Posts.Input'
++      payload: {
++        queryDraft: string
++      }
++    }
++  | {
++      type: 'Search.Posts.Submit'
++    }
+ 
+ export default function reducer(
+   state: RootState | undefined = {
++    queryDraft: '',
++    queryDraftIsValid: false,
+     query: '',
+     postsStatus: 'initial',
+     posts: [],
+@@ -34,22 +53,31 @@
+   action: Actions,
+ ): RootState {
+   switch (action.type) {
++    case 'Search.Posts.Input': {
++      const { queryDraft } = action.payload
++
++      return {
++        ...state,
++        queryDraft,
++        queryDraftIsValid: Boolean(queryDraft.trim()),
++      }
++    }
++
+     case 'Search.Posts.Submit': {
+-      const { postsStatus } = state
++      const { postsStatus, queryDraft } = state
+       if (postsStatus === 'waiting' || postsStatus === 'loading') {
+         return state
+       }
+ 
+-      const { query } = action.payload
+       return {
+         ...state,
+-        query,
+         postsStatus: 'waiting',
++        query: queryDraft.trim(),
+       }
+     }
+ 
+     default: {
+-      // const _: never = action
++      const _: never = action
+       return state
+     }
+   }
+Only in examples/9-with-comments: util.ts
