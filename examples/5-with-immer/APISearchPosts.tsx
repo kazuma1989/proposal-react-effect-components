@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
 import { useSelector, useDispatch, useStore } from 'react-redux'
 import { Dispatch, Store } from 'redux'
+import produce from 'immer'
 import { RootState } from './reducer'
 import { StoreExt } from './storeEnhancer'
 
-export default function SearchPostsAPI() {
+export default function APISearchPosts() {
   const store = useStore() as Store<RootState, Actions> & StoreExt
   useEffect(() => store.appendReducer(reducer), [])
 
@@ -82,39 +83,38 @@ type Actions =
       error: true
     }
 
-export function reducer(state: RootState, action: Actions): RootState {
+export const reducer = produce(function(
+  state: RootState,
+  action: Actions,
+): void {
   switch (action.type) {
     case 'API.Posts.Start': {
-      return {
-        ...state,
-        postsStatus: 'loading',
-      }
+      state.postsStatus = 'loading'
+
+      return
     }
 
     case 'API.Posts.Complete': {
       const { posts } = action.payload
 
-      return {
-        ...state,
-        postsStatus: 'complete',
-        posts: posts.map(post => ({
-          ...post,
-          commentsStatus: 'waiting',
-          comments: [],
-        })),
-      }
+      state.postsStatus = 'complete'
+      state.posts = posts.map(post => ({
+        ...post,
+        commentsStatus: 'waiting',
+        comments: [],
+      }))
+
+      return
     }
 
     case 'API.Posts.Error': {
-      return {
-        ...state,
-        postsStatus: 'error',
-      }
+      state.postsStatus = 'error'
+
+      return
     }
 
     default: {
       const _: never = action
-      return state
     }
   }
-}
+})

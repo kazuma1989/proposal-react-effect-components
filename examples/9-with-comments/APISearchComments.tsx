@@ -4,7 +4,7 @@ import { Store } from 'redux'
 import { RootState } from './reducer'
 import { StoreExt } from './storeEnhancer'
 
-export default function SearchCommentsAPI() {
+export default function APISearchComments() {
   const store = useStore() as Store<RootState, Actions> & StoreExt
   useEffect(() => store.appendReducer(reducer), [])
 

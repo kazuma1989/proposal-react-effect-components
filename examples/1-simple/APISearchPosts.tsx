@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Dispatch } from 'redux'
 import { RootState, Actions } from './reducer'
 
-export default function SearchPostsAPI() {
+export default function APISearchPosts() {
   const [query, status] = useSelector((state: RootState) => [
     state.query,
     state.postsStatus,

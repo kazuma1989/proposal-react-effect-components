@@ -4,7 +4,7 @@ import { Dispatch } from 'redux'
 import { RootState } from './reducer'
 import appendReducer from './appendReducer'
 
-export default function SearchPostsAPI() {
+export default function APISearchPosts() {
   useEffect(() => appendReducer(reducer), [])
 
   const [query, status] = useSelector((state: RootState) => [

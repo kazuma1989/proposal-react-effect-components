@@ -1,14 +1,14 @@
 import React from 'react'
-import SearchPostsAPI from './SearchPostsAPI'
-import SearchCommentsAPI from './SearchCommentsAPI'
+import APISearchPosts from './APISearchPosts'
+import APISearchComments from './APISearchComments'
 import SearchInput from './SearchInput'
 import SearchResults from './SearchResults'
 
 export default function SearchApp() {
   return (
     <>
-      <SearchPostsAPI />
-      <SearchCommentsAPI />
+      <APISearchPosts />
+      <APISearchComments />
 
       <SearchInput />
       <SearchResults />
