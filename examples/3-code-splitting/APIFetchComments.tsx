@@ -4,7 +4,7 @@ import { Dispatch } from 'redux'
 import { RootState } from './reducer'
 import appendReducer from './appendReducer'
 
-export default function APISearchComments() {
+export default function APIFetchComments() {
   useEffect(() => appendReducer(reducer), [])
 
   const posts = useSelector((state: RootState) => state.posts)

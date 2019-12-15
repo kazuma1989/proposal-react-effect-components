@@ -1,8 +1,8 @@
 Only in examples/3-code-splitting: 2vs3.diff
 Only in examples/4-code-splitting-refactored: 3vs4.diff
-diff -ur examples/3-code-splitting/APISearchComments.tsx examples/4-code-splitting-refactored/APISearchComments.tsx
---- examples/3-code-splitting/APISearchComments.tsx	2019-12-15 12:40:42.000000000 +0900
-+++ examples/4-code-splitting-refactored/APISearchComments.tsx	2019-12-15 12:40:42.000000000 +0900
+diff -ur examples/3-code-splitting/APIFetchComments.tsx examples/4-code-splitting-refactored/APIFetchComments.tsx
+--- examples/3-code-splitting/APIFetchComments.tsx	2019-12-15 16:29:03.000000000 +0900
++++ examples/4-code-splitting-refactored/APIFetchComments.tsx	2019-12-15 16:29:03.000000000 +0900
 @@ -1,11 +1,12 @@
  import { useEffect } from 'react'
 -import { useSelector, useDispatch } from 'react-redux'
@@ -13,7 +13,7 @@ diff -ur examples/3-code-splitting/APISearchComments.tsx examples/4-code-splitti
 -import appendReducer from './appendReducer'
 +import { StoreExt } from './storeEnhancer'
  
- export default function APISearchComments() {
+ export default function APIFetchComments() {
 -  useEffect(() => appendReducer(reducer), [])
 +  const store = useStore() as Store<RootState, Actions> & StoreExt
 +  useEffect(() => store.appendReducer(reducer), [])

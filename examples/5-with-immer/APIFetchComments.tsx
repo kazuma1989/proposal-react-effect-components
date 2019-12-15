@@ -5,7 +5,7 @@ import produce from 'immer'
 import { RootState } from './reducer'
 import { StoreExt } from './storeEnhancer'
 
-export default function APISearchComments() {
+export default function APIFetchComments() {
   const store = useStore() as Store<RootState, Actions> & StoreExt
   useEffect(() => store.appendReducer(reducer), [])
 

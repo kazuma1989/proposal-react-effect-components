@@ -1,8 +1,8 @@
 Only in examples/4-code-splitting-refactored: 3vs4.diff
 Only in examples/5-with-immer: 4vs5.diff
-diff -ur examples/4-code-splitting-refactored/APISearchComments.tsx examples/5-with-immer/APISearchComments.tsx
---- examples/4-code-splitting-refactored/APISearchComments.tsx	2019-12-15 12:40:42.000000000 +0900
-+++ examples/5-with-immer/APISearchComments.tsx	2019-12-15 12:40:42.000000000 +0900
+diff -ur examples/4-code-splitting-refactored/APIFetchComments.tsx examples/5-with-immer/APIFetchComments.tsx
+--- examples/4-code-splitting-refactored/APIFetchComments.tsx	2019-12-15 16:29:03.000000000 +0900
++++ examples/5-with-immer/APIFetchComments.tsx	2019-12-15 16:29:03.000000000 +0900
 @@ -1,6 +1,7 @@
  import { useEffect } from 'react'
  import { useSelector, useDispatch, useStore } from 'react-redux'

@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Dispatch } from 'redux'
 import { RootState, Actions } from './reducer'
 
-export default function APISearchComments() {
+export default function APIFetchComments() {
   const posts = useSelector((state: RootState) => state.posts)
   const dispatch = useDispatch<Dispatch<Actions>>()
 

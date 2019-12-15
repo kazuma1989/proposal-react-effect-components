@@ -1,8 +1,8 @@
 Only in examples/2-subtree-rendering: 1vs2.diff
 Only in examples/3-code-splitting: 2vs3.diff
-diff -ur examples/2-subtree-rendering/APISearchComments.tsx examples/3-code-splitting/APISearchComments.tsx
---- examples/2-subtree-rendering/APISearchComments.tsx	2019-12-15 12:40:42.000000000 +0900
-+++ examples/3-code-splitting/APISearchComments.tsx	2019-12-15 12:40:42.000000000 +0900
+diff -ur examples/2-subtree-rendering/APIFetchComments.tsx examples/3-code-splitting/APIFetchComments.tsx
+--- examples/2-subtree-rendering/APIFetchComments.tsx	2019-12-15 16:29:03.000000000 +0900
++++ examples/3-code-splitting/APIFetchComments.tsx	2019-12-15 16:29:03.000000000 +0900
 @@ -1,9 +1,12 @@
  import { useEffect } from 'react'
  import { useSelector, useDispatch } from 'react-redux'
@@ -11,7 +11,7 @@ diff -ur examples/2-subtree-rendering/APISearchComments.tsx examples/3-code-spli
 +import { RootState } from './reducer'
 +import appendReducer from './appendReducer'
  
- export default function APISearchComments() {
+ export default function APIFetchComments() {
 +  useEffect(() => appendReducer(reducer), [])
 +
    const posts = useSelector((state: RootState) => state.posts)

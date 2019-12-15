@@ -1,15 +1,15 @@
 import { useEffect } from 'react'
-import { useSelector, useStore } from 'react-redux'
-import { Store } from 'redux'
+import { useSelector, useDispatch, useStore } from 'react-redux'
+import { Dispatch, Store } from 'redux'
 import { RootState } from './reducer'
 import { StoreExt } from './storeEnhancer'
 
-export default function APISearchComments() {
+export default function APIFetchComments() {
   const store = useStore() as Store<RootState, Actions> & StoreExt
   useEffect(() => store.appendReducer(reducer), [])
 
   const posts = useSelector((state: RootState) => state.posts)
-  const dispatch = store.dispatch
+  const dispatch = useDispatch<Dispatch<Actions>>()
 
   useEffect(() => {
     posts.forEach(async ({ id: postId, commentsStatus }) => {
@@ -87,7 +87,7 @@ type Actions =
       error: true
     }
 
-function reducer(state: RootState, action: Actions): RootState {
+export function reducer(state: RootState, action: Actions): RootState {
   switch (action.type) {
     case 'API.Comments.Start': {
       const { postId } = action.payload
@@ -129,7 +129,22 @@ function reducer(state: RootState, action: Actions): RootState {
     }
 
     case 'API.Comments.Error': {
-      return state
+      const { postId } = action.payload
+      const { posts } = state
+
+      return {
+        ...state,
+        posts: posts.map(post => {
+          if (post.id !== postId) {
+            return post
+          }
+
+          return {
+            ...post,
+            commentsStatus: 'error',
+          }
+        }),
+      }
     }
 
     default: {
