@@ -66,7 +66,8 @@ export default produce(function reducer(
       const { postsStatus } = state
       if (postsStatus === 'waiting' || postsStatus === 'loading') return
 
-      state.query = state.queryDraft.trim()
+      const { queryDraft } = state
+      state.query = queryDraft.trim()
       state.postsStatus = 'waiting'
 
       return

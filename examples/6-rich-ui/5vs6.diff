@@ -223,6 +223,64 @@ diff -ur examples/5-with-immer/SearchInput.tsx examples/6-rich-ui/SearchInput.ts
        />
      </Container>
    )
+diff -ur examples/5-with-immer/SearchResults.tsx examples/6-rich-ui/SearchResults.tsx
+--- examples/5-with-immer/SearchResults.tsx	2019-12-15 11:40:53.000000000 +0900
++++ examples/6-rich-ui/SearchResults.tsx	2019-12-15 22:24:47.000000000 +0900
+@@ -1,24 +1,43 @@
+ import React from 'react'
+ import { useSelector } from 'react-redux'
+-import { Container, Title, Post } from '../../lib/components'
++import {
++  Container,
++  Title,
++  Post,
++  ErrorMessage,
++  Loading,
++  Empty,
++} from '../../lib/components'
+ import { RootState } from './reducer'
+ 
+ export default function SearchResults() {
+-  const posts = useSelector((state: RootState) => state.posts)
++  const [posts, status] = useSelector((state: RootState) => [
++    state.posts,
++    state.postsStatus,
++  ])
+ 
+   return (
+     <Container>
+       <Title>Results</Title>
+ 
+-      {posts.map(({ id, title, body, commentsStatus, comments }) => (
+-        <Post
+-          key={id}
+-          title={title}
+-          body={body}
+-          commentsStatus={commentsStatus}
+-          comments={comments}
+-        />
+-      ))}
++      {status === 'error' ? (
++        <ErrorMessage>ERROR</ErrorMessage>
++      ) : status === 'loading' ? (
++        <Loading />
++      ) : !posts.length ? (
++        <Empty />
++      ) : (
++        posts.map(({ id, title, body, comments, commentsStatus }) => (
++          <Post
++            key={id}
++            title={title}
++            body={body}
++            imgSrc="https://bulma.io/images/placeholders/128x128.png"
++            commentsStatus={commentsStatus}
++            comments={comments}
++          />
++        ))
++      )}
+     </Container>
+   )
+ }
 diff -ur examples/5-with-immer/reducer.test.ts examples/6-rich-ui/reducer.test.ts
 --- examples/5-with-immer/reducer.test.ts	2019-12-15 18:25:45.000000000 +0900
 +++ examples/6-rich-ui/reducer.test.ts	2019-12-15 21:50:12.000000000 +0900
@@ -296,7 +354,7 @@ diff -ur examples/5-with-immer/reducer.test.ts examples/6-rich-ui/reducer.test.t
    })
 diff -ur examples/5-with-immer/reducer.ts examples/6-rich-ui/reducer.ts
 --- examples/5-with-immer/reducer.ts	2019-12-15 12:08:27.000000000 +0900
-+++ examples/6-rich-ui/reducer.ts	2019-12-15 21:51:37.000000000 +0900
++++ examples/6-rich-ui/reducer.ts	2019-12-15 22:28:53.000000000 +0900
 @@ -1,13 +1,24 @@
  import produce from 'immer'
  
@@ -352,7 +410,7 @@ diff -ur examples/5-with-immer/reducer.ts examples/6-rich-ui/reducer.ts
      query: '',
      postsStatus: 'initial',
      posts: [],
-@@ -36,19 +53,27 @@
+@@ -36,19 +53,28 @@
    action: Actions,
  ): void | RootState {
    switch (action.type) {
@@ -371,7 +429,8 @@ diff -ur examples/5-with-immer/reducer.ts examples/6-rich-ui/reducer.ts
  
 -      const { query } = action.payload
 -      state.query = query
-+      state.query = state.queryDraft.trim()
++      const { queryDraft } = state
++      state.query = queryDraft.trim()
        state.postsStatus = 'waiting'
  
        return
