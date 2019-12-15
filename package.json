@@ -10,6 +10,8 @@
     "start:4": "parcel ./examples/4-code-splitting-refactored/index.html",
     "start:5": "parcel ./examples/5-with-immer/index.html",
     "test:5": "jest ./examples/5-with-immer/",
+    "start:6": "parcel ./examples/6-rich-ui/index.html",
+    "test:6": "jest ./examples/6-rich-ui/",
     "start:9": "parcel ./examples/9-with-comments/index.html",
     "tsc": "tsc"
   },

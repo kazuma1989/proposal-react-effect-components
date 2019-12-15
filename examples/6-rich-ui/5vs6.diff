@@ -1,0 +1,385 @@
+Only in examples/5-with-immer: 4vs5.diff
+Only in examples/6-rich-ui: 5vs6.diff
+diff -ur examples/5-with-immer/APIFetchComments.test.tsx examples/6-rich-ui/APIFetchComments.test.tsx
+--- examples/5-with-immer/APIFetchComments.test.tsx	2019-12-15 18:45:21.000000000 +0900
++++ examples/6-rich-ui/APIFetchComments.test.tsx	2019-12-15 22:03:33.000000000 +0900
+@@ -3,30 +3,50 @@
+ import { reducer } from './APIFetchComments'
+ 
+ const initial: RootState = {
+-  query: 'query',
++  queryDraft: 'The',
++  queryDraftIsValid: true,
++  query: 'The',
+   postsStatus: 'complete',
+   posts: [
+     {
+       userId: 1,
+       id: 1,
+-      title: 'The title 1',
+-      body: 'The body 1',
++      titleRaw: 'The title 1',
++      title: [
++        { text: '' },
++        { text: 'The', keyword: true },
++        { text: ' title 1' },
++      ],
++      bodyRaw: 'The body 1',
++      body: [{ text: '' }, { text: 'The', keyword: true }, { text: ' body 1' }],
+       commentsStatus: 'waiting',
+       comments: [],
+     },
+     {
+       userId: 2,
+       id: 2,
+-      title: 'The title 2',
+-      body: 'The body 2',
++      titleRaw: 'The title 2',
++      title: [
++        { text: '' },
++        { text: 'The', keyword: true },
++        { text: ' title 2' },
++      ],
++      bodyRaw: 'The body 2',
++      body: [{ text: '' }, { text: 'The', keyword: true }, { text: ' body 2' }],
+       commentsStatus: 'waiting',
+       comments: [],
+     },
+     {
+       userId: 3,
+       id: 3,
+-      title: 'The title 3',
+-      body: 'The body 3',
++      titleRaw: 'The title 3',
++      title: [
++        { text: '' },
++        { text: 'The', keyword: true },
++        { text: ' title 3' },
++      ],
++      bodyRaw: 'The body 3',
++      body: [{ text: '' }, { text: 'The', keyword: true }, { text: ' body 3' }],
+       commentsStatus: 'waiting',
+       comments: [],
+     },
+diff -ur examples/5-with-immer/APISearchPosts.test.tsx examples/6-rich-ui/APISearchPosts.test.tsx
+--- examples/5-with-immer/APISearchPosts.test.tsx	2019-12-15 18:36:34.000000000 +0900
++++ examples/6-rich-ui/APISearchPosts.test.tsx	2019-12-15 22:05:31.000000000 +0900
+@@ -3,6 +3,8 @@
+ import { reducer } from './APISearchPosts'
+ 
+ const initial: RootState = {
++  queryDraft: 'The',
++  queryDraftIsValid: true,
+   query: '',
+   postsStatus: 'initial',
+   posts: [],
+@@ -37,7 +39,7 @@
+       reducer(state, {
+         type: 'API.Posts.Complete',
+         payload: {
+-          query: 'some query',
++          query: 'The',
+           posts: [
+             {
+               userId: 1,
+@@ -67,24 +69,54 @@
+           {
+             userId: 1,
+             id: 1,
+-            title: 'The title 1',
+-            body: 'The body 1',
++            titleRaw: 'The title 1',
++            title: [
++              { text: '' },
++              { text: 'The', keyword: true },
++              { text: ' title 1' },
++            ],
++            bodyRaw: 'The body 1',
++            body: [
++              { text: '' },
++              { text: 'The', keyword: true },
++              { text: ' body 1' },
++            ],
+             commentsStatus: 'waiting',
+             comments: [],
+           },
+           {
+             userId: 2,
+             id: 2,
+-            title: 'The title 2',
+-            body: 'The body 2',
++            titleRaw: 'The title 2',
++            title: [
++              { text: '' },
++              { text: 'The', keyword: true },
++              { text: ' title 2' },
++            ],
++            bodyRaw: 'The body 2',
++            body: [
++              { text: '' },
++              { text: 'The', keyword: true },
++              { text: ' body 2' },
++            ],
+             commentsStatus: 'waiting',
+             comments: [],
+           },
+           {
+             userId: 3,
+             id: 3,
+-            title: 'The title 3',
+-            body: 'The body 3',
++            titleRaw: 'The title 3',
++            title: [
++              { text: '' },
++              { text: 'The', keyword: true },
++              { text: ' title 3' },
++            ],
++            bodyRaw: 'The body 3',
++            body: [
++              { text: '' },
++              { text: 'The', keyword: true },
++              { text: ' body 3' },
++            ],
+             commentsStatus: 'waiting',
+             comments: [],
+           },
+diff -ur examples/5-with-immer/APISearchPosts.tsx examples/6-rich-ui/APISearchPosts.tsx
+--- examples/5-with-immer/APISearchPosts.tsx	2019-12-15 12:40:17.000000000 +0900
++++ examples/6-rich-ui/APISearchPosts.tsx	2019-12-15 22:00:30.000000000 +0900
+@@ -95,11 +95,22 @@
+     }
+ 
+     case 'API.Posts.Complete': {
+-      const { posts } = action.payload
++      const { query, posts } = action.payload
+ 
+       state.postsStatus = 'complete'
+-      state.posts = posts.map(post => ({
+-        ...post,
++      state.posts = posts.map(({ userId, id, title, body }) => ({
++        userId,
++        id,
++        titleRaw: title,
++        title: title
++          .split(query)
++          .flatMap(text => [{ text }, { text: query, keyword: true }])
++          .slice(0, -1),
++        bodyRaw: body,
++        body: body
++          .split(query)
++          .flatMap(text => [{ text }, { text: query, keyword: true }])
++          .slice(0, -1),
+         commentsStatus: 'waiting',
+         comments: [],
+       }))
+diff -ur examples/5-with-immer/SearchInput.tsx examples/6-rich-ui/SearchInput.tsx
+--- examples/5-with-immer/SearchInput.tsx	2019-12-15 11:40:53.000000000 +0900
++++ examples/6-rich-ui/SearchInput.tsx	2019-12-15 22:17:51.000000000 +0900
+@@ -1,31 +1,37 @@
+-import React, { useState } from 'react'
++import React from 'react'
+ import { useSelector, useDispatch } from 'react-redux'
+ import { Dispatch } from 'redux'
+ import { Container, Title, SearchForm } from '../../lib/components'
+ import { RootState, Actions } from './reducer'
+ 
+ export default function SearchInput() {
+-  const status = useSelector((state: RootState) => state.postsStatus)
++  const [status, draft, valid] = useSelector((state: RootState) => [
++    state.postsStatus,
++    state.queryDraft,
++    state.queryDraftIsValid,
++  ])
+   const dispatch = useDispatch<Dispatch<Actions>>()
+ 
+-  const [query, setQuery] = useState('')
+-
+   return (
+     <Container>
+       <Title>Search posts</Title>
+ 
+       <SearchForm
+-        text={query}
+-        onChange={setQuery}
+-        disabled={status === 'loading'}
+-        onSubmit={() =>
++        text={draft}
++        onChange={text =>
+           dispatch({
+-            type: 'Search.Posts.Submit',
++            type: 'Search.Posts.Input',
+             payload: {
+-              query,
++              queryDraft: text,
+             },
+           })
+         }
++        disabled={status === 'loading' || !valid}
++        onSubmit={() =>
++          dispatch({
++            type: 'Search.Posts.Submit',
++          })
++        }
+       />
+     </Container>
+   )
+diff -ur examples/5-with-immer/reducer.test.ts examples/6-rich-ui/reducer.test.ts
+--- examples/5-with-immer/reducer.test.ts	2019-12-15 18:25:45.000000000 +0900
++++ examples/6-rich-ui/reducer.test.ts	2019-12-15 21:50:12.000000000 +0900
+@@ -2,28 +2,45 @@
+ import reducer, { RootState } from './reducer'
+ 
+ const initial: RootState = {
++  queryDraft: '',
++  queryDraftIsValid: false,
+   query: '',
+   postsStatus: 'initial',
+   posts: [],
+ }
+ 
++describe('Search.Posts.Input', () => {
++  it('accepts input value', () => {
++    const state = produce(initial, draft => {})
++
++    expect(
++      reducer(state, {
++        type: 'Search.Posts.Input',
++        payload: {
++          queryDraft: 'new value',
++        },
++      }),
++    ).toEqual(
++      produce(state, draft => {
++        draft.queryDraft = 'new value'
++        draft.queryDraftIsValid = true
++      }),
++    )
++  })
++})
++
+ describe('Search.Posts.Submit', () => {
+   it('accepts submitted value', () => {
+     const state = produce(initial, draft => {
+-      draft.query = 'initial value'
+       draft.postsStatus = 'initial'
+     })
+ 
+     expect(
+       reducer(state, {
+         type: 'Search.Posts.Submit',
+-        payload: {
+-          query: 'new value',
+-        },
+       }),
+     ).toEqual(
+       produce(state, draft => {
+-        draft.query = 'new value'
+         draft.postsStatus = 'waiting'
+       }),
+     )
+@@ -31,16 +48,12 @@
+ 
+   it('ignores if waiting or loading', () => {
+     const state = produce(initial, draft => {
+-      draft.query = 'initial value'
+       draft.postsStatus = 'waiting'
+     })
+ 
+     expect(
+       reducer(state, {
+         type: 'Search.Posts.Submit',
+-        payload: {
+-          query: 'new value',
+-        },
+       }),
+     ).toEqual(produce(state, draft => {}))
+   })
+diff -ur examples/5-with-immer/reducer.ts examples/6-rich-ui/reducer.ts
+--- examples/5-with-immer/reducer.ts	2019-12-15 12:08:27.000000000 +0900
++++ examples/6-rich-ui/reducer.ts	2019-12-15 21:51:37.000000000 +0900
+@@ -1,13 +1,24 @@
+ import produce from 'immer'
+ 
+ export type RootState = {
++  queryDraft: string
++  queryDraftIsValid: boolean
+   query: string
++
+   postsStatus: 'initial' | 'waiting' | 'loading' | 'complete' | 'error'
+   posts: {
+     userId: number
+     id: number
+-    title: string
+-    body: string
++    titleRaw: string
++    title: {
++      text: string
++      keyword?: boolean
++    }[]
++    bodyRaw: string
++    body: {
++      text: string
++      keyword?: boolean
++    }[]
+ 
+     commentsStatus: 'initial' | 'waiting' | 'loading' | 'complete' | 'error'
+     comments: {
+@@ -20,15 +31,21 @@
+   }[]
+ }
+ 
+-export type Actions = {
+-  type: 'Search.Posts.Submit'
+-  payload: {
+-    query: string
+-  }
+-}
++export type Actions =
++  | {
++      type: 'Search.Posts.Input'
++      payload: {
++        queryDraft: string
++      }
++    }
++  | {
++      type: 'Search.Posts.Submit'
++    }
+ 
+ export default produce(function reducer(
+   state: RootState | undefined = {
++    queryDraft: '',
++    queryDraftIsValid: false,
+     query: '',
+     postsStatus: 'initial',
+     posts: [],
+@@ -36,19 +53,27 @@
+   action: Actions,
+ ): void | RootState {
+   switch (action.type) {
++    case 'Search.Posts.Input': {
++      const { queryDraft } = action.payload
++
++      state.queryDraft = queryDraft
++      state.queryDraftIsValid = Boolean(queryDraft.trim())
++
++      return
++    }
++
+     case 'Search.Posts.Submit': {
+       const { postsStatus } = state
+       if (postsStatus === 'waiting' || postsStatus === 'loading') return
+ 
+-      const { query } = action.payload
+-      state.query = query
++      state.query = state.queryDraft.trim()
+       state.postsStatus = 'waiting'
+ 
+       return
+     }
+ 
+     default: {
+-      // const _: never = action
++      const _: never = action
+       return state
+     }
+   }
